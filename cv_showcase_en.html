@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Søren Kim Hansen — IT Leader & Service Manager</title>
+<style>
+  :root {
+    --maroon: #5C1626;
+    --maroon-dark: #3D0D18;
+    --maroon-light: #8B2A3E;
+    --accent: #E89BAA;
+    --gold: #C8A96E;
+    --white: #FFFFFF;
+    --off-white: #F9F7F5;
+    --light: #F3EEF0;
+    --mid: #E2D6DA;
+    --text: #1A1A2E;
+    --text-soft: #5A4A50;
+    --success: #2D6A4F;
+    --success-bg: #D8F3DC;
+    --warning: #9B5000;
+    --warning-bg: #FFE8CC;
+    --info: #1D4ED8;
+    --info-bg: #DBEAFE;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--off-white);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(92,22,38,0.97);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem; height: 60px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .nav-brand { color: var(--white); font-weight: 700; font-size: 1rem; letter-spacing: 0.5px; }
+  .nav-brand span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    color: rgba(255,255,255,0.8); text-decoration: none;
+    font-size: 0.875rem; font-weight: 500; letter-spacing: 0.3px;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-lang {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.8); font-size: 0.75rem; font-weight: 600;
+    padding: 0.25rem 0.65rem; border-radius: 2rem; text-decoration: none;
+    transition: background 0.2s;
+  }
+  .nav-lang:hover { background: rgba(255,255,255,0.18); }
+
+  /* ── HERO ── */
+  .hero {
+    background-color: #3D0D18;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 110px 2.5rem 70px;
+    text-align: center;
+  }
+  .hero-inner { max-width: 780px; width: 100%; }
+  .hero-eyebrow { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem; justify-content: center; }
+  .hero-line { width: 36px; height: 2px; background: #C8A96E; }
+  .hero-eyebrow-text {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: #C8A96E;
+  }
+  .hero h1 {
+    font-size: clamp(3rem, 5.5vw, 4.5rem);
+    font-weight: 800; color: #FFFFFF;
+    line-height: 1.05; letter-spacing: -1px; margin-bottom: 0.4rem;
+  }
+  .hero h1 .first { display: block; }
+  .hero h1 .last { display: block; color: #E89BAA; }
+  .hero-rule { width: 60px; height: 3px; background: #C8A96E; margin: 1.5rem auto; }
+  .hero-title { font-size: 1rem; color: rgba(255,255,255,0.65); font-weight: 400; margin-bottom: 1.75rem; }
+  .hero-desc { font-size: 0.95rem; color: rgba(255,255,255,0.55); line-height: 1.8; margin: 0 auto 2.5rem; max-width: 580px; }
+  .hero-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2.5rem; justify-content: center; }
+  .hero-tag {
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14);
+    color: rgba(255,255,255,0.75); font-size: 0.78rem;
+    padding: 0.3rem 0.85rem; border-radius: 2rem;
+  }
+  .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-bottom: 3rem; }
+  .btn-primary {
+    background: #C8A96E; color: #3D0D18;
+    padding: 0.8rem 1.75rem; border-radius: 0.4rem;
+    font-weight: 700; font-size: 0.875rem; text-decoration: none;
+    transition: opacity 0.2s; display: inline-block; letter-spacing: 0.3px;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+  .hero-bottom {
+    display: flex; gap: 2.5rem; justify-content: center; align-items: center;
+    padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.08);
+    flex-wrap: wrap;
+  }
+  .hero-contact-list { display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center; }
+  .hero-contact-item { display: flex; align-items: center; gap: 0.75rem; }
+  .hero-contact-icon {
+    width: 34px; height: 34px; border-radius: 8px;
+    background: rgba(200,169,110,0.12); border: 1px solid rgba(200,169,110,0.2);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .hero-contact-label { font-size: 0.7rem; color: rgba(255,255,255,0.4); margin-bottom: 0.1rem; letter-spacing: 0.5px; }
+  .hero-contact-value { font-size: 0.85rem; color: rgba(255,255,255,0.85); font-weight: 500; text-align: left; }
+  .hero-contact-value a { color: rgba(255,255,255,0.85); text-decoration: none; }
+  .hero-contact-value a:hover { color: #E89BAA; }
+  .hero-divider { display: none; }
+  .hero-stats-grid { display: flex; }
+  .hero-stat { padding: 0.6rem 1.2rem; text-align: center; border-left: 1px solid rgba(255,255,255,0.1); }
+  .hero-stat:first-child { border-left: none; }
+  .hero-stat-num { font-size: 1.5rem; font-weight: 800; color: #C8A96E; line-height: 1; }
+  .hero-stat-label { font-size: 0.6rem; color: rgba(255,255,255,0.4); margin-top: 0.3rem; letter-spacing: 0.5px; text-transform: uppercase; }
+  .hero-card { display: none; }
+  .hero-contact-title { display: none; }
+
+  /* ── SECTIONS ── */
+  section { padding: 5rem 2.5rem; }
+  section:nth-child(even) { background: var(--white); }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--maroon); margin-bottom: 0.75rem; }
+  .section-title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: var(--text); margin-bottom: 0.5rem; }
+  .section-sub { font-size: 1rem; color: var(--text-soft); max-width: 600px; margin-bottom: 3rem; }
+  .divider { width: 48px; height: 4px; background: var(--maroon); border-radius: 2px; margin: 1rem 0 2.5rem; }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 20px; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(to bottom, var(--maroon), var(--mid)); }
+  .timeline-item { display: flex; gap: 2rem; margin-bottom: 2.5rem; position: relative; }
+  .timeline-dot {
+    flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%;
+    background: var(--maroon); border: 3px solid var(--white);
+    box-shadow: 0 0 0 2px var(--maroon);
+    display: flex; align-items: center; justify-content: center; z-index: 1;
+  }
+  .timeline-dot svg { color: var(--white); }
+  .timeline-content {
+    flex: 1; background: var(--white); border: 1px solid var(--mid);
+    border-radius: 0.75rem; padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(92,22,38,0.06);
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .timeline-content:hover { box-shadow: 0 8px 30px rgba(92,22,38,0.12); transform: translateY(-2px); }
+  .timeline-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; }
+  .timeline-role { font-size: 1rem; font-weight: 700; color: var(--text); }
+  .timeline-company { font-size: 0.875rem; color: var(--maroon); font-weight: 600; margin-top: 0.1rem; }
+  .timeline-period { font-size: 0.75rem; background: var(--light); color: var(--maroon); padding: 0.2rem 0.6rem; border-radius: 2rem; font-weight: 600; white-space: nowrap; }
+  .timeline-bullets { margin-top: 0.75rem; padding-left: 1.1rem; }
+  .timeline-bullets li { font-size: 0.875rem; color: var(--text-soft); margin-bottom: 0.3rem; }
+
+  /* ── SKILLS ── */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+  .skills-card { background: var(--off-white); border: 1px solid var(--mid); border-radius: 0.75rem; padding: 1.5rem; }
+  .skills-card h4 { font-size: 0.875rem; font-weight: 700; color: var(--maroon); margin-bottom: 1.25rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  .skill-row { margin-bottom: 0.9rem; }
+  .skill-top { display: flex; justify-content: space-between; margin-bottom: 0.3rem; }
+  .skill-name { font-size: 0.875rem; font-weight: 500; color: var(--text); }
+  .skill-dots { display: flex; gap: 3px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--mid); }
+  .dot.filled { background: var(--maroon); }
+  .skill-bar { height: 4px; background: var(--mid); border-radius: 2px; overflow: hidden; }
+  .skill-fill { height: 100%; background: linear-gradient(90deg, var(--maroon), var(--maroon-light)); border-radius: 2px; }
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .tag { background: var(--light); border: 1px solid var(--mid); color: var(--maroon); font-size: 0.8rem; font-weight: 500; padding: 0.35rem 0.8rem; border-radius: 2rem; }
+  .cert-list { display: flex; flex-direction: column; gap: 0.6rem; }
+  .cert-item { display: flex; align-items: center; gap: 0.75rem; }
+  .cert-badge { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; background: var(--maroon); display: flex; align-items: center; justify-content: center; }
+  .cert-badge svg { color: var(--white); }
+  .cert-name { font-size: 0.875rem; font-weight: 600; color: var(--text); }
+  .cert-year { font-size: 0.75rem; color: var(--text-soft); }
+  .cert-active { color: #C8A96E !important; font-weight: 700; }
+
+  /* ── DASHBOARD ── */
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+  .stat-card { background: var(--white); border: 1px solid var(--mid); border-radius: 0.75rem; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.25rem; }
+  .stat-card-num { font-size: 2rem; font-weight: 800; color: var(--maroon); }
+  .stat-card-label { font-size: 0.8rem; color: var(--text-soft); }
+  .app-grid { display: grid; gap: 1rem; }
+  .app-card {
+    background: var(--white); border: 1px solid var(--mid); border-radius: 0.75rem; padding: 1.25rem 1.5rem;
+    display: grid; grid-template-columns: auto 1fr auto; gap: 1rem; align-items: center;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .app-card:hover { box-shadow: 0 6px 24px rgba(92,22,38,0.1); transform: translateY(-1px); }
+  .app-index { width: 36px; height: 36px; border-radius: 50%; background: var(--light); color: var(--maroon); font-size: 0.875rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .app-role { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+  .app-company { font-size: 0.85rem; color: var(--maroon); font-weight: 600; }
+  .app-date { font-size: 0.75rem; color: var(--text-soft); margin-top: 0.1rem; }
+  .app-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; }
+  .status-badge { font-size: 0.75rem; font-weight: 700; padding: 0.3rem 0.75rem; border-radius: 2rem; white-space: nowrap; }
+  .status-sent      { background: #DBEAFE; color: #1D4ED8; }
+  .status-interview { background: #FFE8CC; color: #9B5000; }
+  .status-rejected  { background: #FEE2E2; color: #991B1B; }
+  .app-days { font-size: 0.72rem; color: var(--text-soft); }
+
+  /* ── VALUE GRID ── */
+  .value-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.5rem; }
+  .value-card {
+    background: var(--white); border: 1px solid var(--mid);
+    border-radius: 0.75rem; padding: 1.75rem;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .value-card:hover { box-shadow: 0 8px 28px rgba(92,22,38,0.1); transform: translateY(-2px); }
+  .value-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: rgba(61,13,24,0.07); border: 1px solid rgba(61,13,24,0.12);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 1.1rem;
+  }
+  .value-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.6rem; }
+  .value-desc { font-size: 0.875rem; color: var(--text-soft); line-height: 1.7; }
+
+  /* ── EDUCATION ── */
+  .edu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+  .edu-card { background: var(--white); border: 1px solid var(--mid); border-left: 4px solid var(--maroon); border-radius: 0.5rem 0.75rem 0.75rem 0.5rem; padding: 1.25rem; }
+  .edu-degree { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.2rem; }
+  .edu-school { font-size: 0.85rem; color: var(--maroon); font-weight: 600; margin-bottom: 0.5rem; }
+  .edu-year { font-size: 0.75rem; color: var(--text-soft); }
+  .edu-bullets { margin-top: 0.6rem; padding-left: 1rem; }
+  .edu-bullets li { font-size: 0.82rem; color: var(--text-soft); margin-bottom: 0.2rem; }
+
+  /* ── FOOTER ── */
+  footer { background: #2A0910; color: rgba(255,255,255,0.5); text-align: center; padding: 2rem; font-size: 0.85rem; }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* disclaimer banner */
+  .disclaimer {
+    background: #FFF8E7; border-bottom: 2px solid #C8A96E;
+    padding: 0.6rem 2rem; text-align: center;
+    font-size: 0.8rem; color: #7A5A00; font-weight: 500;
+    position: fixed; top: 60px; left: 0; right: 0; z-index: 99;
+  }
+  .disclaimer strong { font-weight: 700; }
+  section { padding-top: 5rem; }
+  .hero { padding-top: 90px; }
+
+  @media (max-width: 768px) {
+    .hero-right { display: none; }
+    .hero-left { padding: 3rem 1.25rem; }
+    nav { padding: 0 1.25rem; }
+    .nav-links { gap: 1rem; }
+    section { padding: 3rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">SKH <span>Portfolio</span></div>
+  <ul class="nav-links">
+    <li><a href="#profile">Profile</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#delivers">What I Deliver</a></li>
+    <li><a href="#applications">Applications</a></li>
+  </ul>
+  <a href="cv_showcase.html" class="nav-lang">🇩🇰 Dansk</a>
+</nav>
+
+<div class="disclaimer">
+  <strong>Demo version</strong> — Company names have been replaced with fictional Duckburg organisations for privacy purposes.
+</div>
+
+<!-- HERO -->
+<div class="hero" id="profile">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <div class="hero-line"></div>
+      <span class="hero-eyebrow-text">IT Leader &amp; Service Manager</span>
+      <div class="hero-line"></div>
+    </div>
+    <h1>
+      <span class="first">Søren Kim</span>
+      <span class="last">Hansen</span>
+    </h1>
+    <div class="hero-rule"></div>
+    <p class="hero-title">Head of IT Service &amp; Operations · Familieretshuset</p>
+    <p class="hero-desc">
+      Technology-grounded leader with 30+ years of experience driving IT teams,
+      ITSM processes and vendor partnerships in large, complex organisations.
+      ITIL 4, Leading SAFe and Lean Six Sigma certified. Mini MBA in Artificial Intelligence (2026).
+    </p>
+    <div class="hero-tags">
+      <span class="hero-tag">ITIL 4 Foundation</span>
+      <span class="hero-tag">Leading SAFe</span>
+      <span class="hero-tag">Lean Six Sigma</span>
+      <span class="hero-tag">ServiceNow</span>
+      <span class="hero-tag">Global Teams</span>
+      <span class="hero-tag">Mini MBA · AI</span>
+    </div>
+    <div class="hero-cta">
+      <a href="https://linkedin.com/in/soren-kim-hansen-year2026" target="_blank" class="btn-primary">Connect on LinkedIn</a>
+    </div>
+    <div class="hero-bottom">
+      <div class="hero-contact-list">
+        <div class="hero-contact-item">
+          <div class="hero-contact-icon">
+            <svg width="15" height="15" fill="none" stroke="#C8A96E" stroke-width="2" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </div>
+          <div>
+            <div class="hero-contact-label">LinkedIn</div>
+            <div class="hero-contact-value"><a href="https://linkedin.com/in/soren-kim-hansen-year2026" target="_blank">soren-kim-hansen-year2026</a></div>
+          </div>
+        </div>
+        <div class="hero-contact-item">
+          <div class="hero-contact-icon">
+            <svg width="15" height="15" fill="none" stroke="#C8A96E" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <div class="hero-contact-label">Location</div>
+            <div class="hero-contact-value">Sønderborg, Denmark</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-stats-grid">
+        <div class="hero-stat"><div class="hero-stat-num">30+</div><div class="hero-stat-label">Years exp.</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">8</div><div class="hero-stat-label">Certifications</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">70+</div><div class="hero-stat-label">Countries</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">5</div><div class="hero-stat-label">Applications</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-inner">
+    <div class="section-label">Career</div>
+    <h2 class="section-title">Professional Experience</h2>
+    <p class="section-sub">30+ years in IT — from hands-on technician on the production floor to global team leader and functional manager.</p>
+    <div class="divider"></div>
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="timeline-dot">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="2"/></svg>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role">Head of IT Service &amp; Operations</div>
+              <div class="timeline-company">Familieretshuset, Region Syddanmark</div>
+            </div>
+            <span class="timeline-period">Feb 2025 – Present</span>
+          </div>
+          <ul class="timeline-bullets">
+            <li>Leads IT Service &amp; Operations for a nationwide public organisation with full people management responsibility.</li>
+            <li>Accountable for operations, support, ITSM processes, documentation, budget and vendor partnerships.</li>
+            <li>Tracks KPIs and drives improvement initiatives using Lean and Agile methods.</li>
+            <li>Contributes to governance, compliance and risk management in close collaboration with senior leadership and IT governance.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:#C8A96E">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role">Professional Development Sabbatical</div>
+              <div class="timeline-company">Focus on Lean &amp; AI</div>
+            </div>
+            <span class="timeline-period">Feb 2024 – Feb 2025</span>
+          </div>
+          <ul class="timeline-bullets">
+            <li>Completed Lean for Leaders and Lean Six Sigma as a deliberate investment in structured problem-solving.</li>
+            <li>Prepared for the next leadership step with a focus on improvement methods and emerging technology.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role">Senior Manager, Unified Communications</div>
+              <div class="timeline-company">Danfoss, Nordborg</div>
+            </div>
+            <span class="timeline-period">Feb 2021 – Feb 2024</span>
+          </div>
+          <ul class="timeline-bullets">
+            <li>Led a global support team as the escalation point across EMEA, Americas and APAC.</li>
+            <li>Built strategic vendor partnerships — negotiated contracts and managed licence costs.</li>
+            <li>Led a major platform migration with structured change governance, testing and stakeholder sign-off.</li>
+            <li>Full people management responsibility with a focus on well-being and skill development.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role">Manager, Unified Communications</div>
+              <div class="timeline-company">Danfoss, Nordborg</div>
+            </div>
+            <span class="timeline-period">Jul 2019 – Feb 2021</span>
+          </div>
+          <ul class="timeline-bullets">
+            <li>Built a new support function from the ground up — budget, governance model and vendor relationships.</li>
+            <li>Drove cross-functional alignment between operations, IT and business stakeholders across regions.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role">Solution Architect &amp; IT Coordinator</div>
+              <div class="timeline-company">Danfoss, Nordborg · Customer Service Centre</div>
+            </div>
+            <span class="timeline-period">Jan 2016 – Jun 2019</span>
+          </div>
+          <ul class="timeline-bullets">
+            <li>Global architect and coordinator for Customer Service Centre infrastructure.</li>
+            <li>Translated complex technical requirements into business-ready solutions for multi-region stakeholders.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:var(--mid)">
+          <svg width="18" height="18" fill="none" stroke="var(--maroon)" stroke-width="2.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role">IT Coordinator &amp; Technical Product Manager</div>
+              <div class="timeline-company">Danfoss, Nordborg · Mobile Devices</div>
+            </div>
+            <span class="timeline-period">Nov 2011 – Oct 2014</span>
+          </div>
+          <ul class="timeline-bullets">
+            <li>Owned budget, vendor selection and lifecycle management for the global mobile device programme.</li>
+            <li>Implemented MDM (SAP Afaria) at scale across a global cross-functional support team.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:var(--mid)">
+          <svg width="18" height="18" fill="none" stroke="var(--maroon)" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role">Lead IT Technician → IT Technician</div>
+              <div class="timeline-company">Danfoss, Nordborg</div>
+            </div>
+            <span class="timeline-period">Sep 1995 – Nov 2011</span>
+          </div>
+          <ul class="timeline-bullets">
+            <li>Advanced from warehouse operations to IT support and infrastructure over 16 years.</li>
+            <li>Led day-to-day operations — primary escalation point for IT incidents on the production floor.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-inner">
+    <div class="section-label">Profile</div>
+    <h2 class="section-title">Skills &amp; Certifications</h2>
+    <p class="section-sub">Technical depth combined with leadership breadth and international experience.</p>
+    <div class="divider"></div>
+
+    <div class="skills-grid">
+      <div class="skills-card">
+        <h4>Leadership Skills</h4>
+        <div class="skill-row">
+          <div class="skill-top"><span class="skill-name">Team Leadership &amp; People Management</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:100%"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-top"><span class="skill-name">Operations &amp; Incident Management</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:100%"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-top"><span class="skill-name">ITSM (Incident, Problem, Knowledge)</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:100%"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-top"><span class="skill-name">Continuous Improvement (Lean)</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:100%"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-top"><span class="skill-name">Complex Technical Systems</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div>
+        </div>
+      </div>
+
+      <div class="skills-card">
+        <h4>Certifications</h4>
+        <div class="cert-list">
+          <div class="cert-item">
+            <div class="cert-badge" style="background:#C8A96E"><svg width="14" height="14" fill="none" stroke="#3D0D18" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+            <div><div class="cert-name">Mini MBA — Artificial Intelligence</div><div class="cert-year cert-active">Completed · 2026</div></div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-badge"><svg width="14" height="14" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+            <div><div class="cert-name">Leading SAFe — Scaled Agile Framework</div><div class="cert-year">Dec 2025</div></div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-badge"><svg width="14" height="14" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div><div class="cert-name">Lean Six Sigma</div><div class="cert-year">Feb 2024</div></div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-badge"><svg width="14" height="14" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div><div class="cert-name">ITIL 4 Foundation</div><div class="cert-year">2021</div></div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-badge"><svg width="14" height="14" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div><div class="cert-name">Dale Carnegie — Communication</div><div class="cert-year">2018</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="skills-card">
+        <h4>Systems &amp; Tools</h4>
+        <div class="tag-cloud" style="margin-bottom:1.5rem">
+          <span class="tag">ServiceNow</span><span class="tag">Jira</span><span class="tag">Power BI</span>
+          <span class="tag">Microsoft 365</span><span class="tag">Microsoft Teams</span>
+          <span class="tag">SAP Afaria (MDM)</span><span class="tag">Azure</span>
+        </div>
+        <h4>Languages</h4>
+        <div style="display:flex;flex-direction:column;gap:0.6rem;margin-top:0.5rem">
+          <div class="skill-row"><div class="skill-top"><span class="skill-name">Danish</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div></div>
+          <div class="skill-row"><div class="skill-top"><span class="skill-name">English</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div></div>
+          <div class="skill-row"><div class="skill-top"><span class="skill-name">German</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.1rem;font-weight:700;margin:3rem 0 1.25rem;color:var(--text)">Education</h3>
+    <div class="edu-grid">
+      <div class="edu-card">
+        <div class="edu-degree">IT Technician</div>
+        <div class="edu-school">EUC Syd, Sønderborg · Apprenticed at Danfoss</div>
+        <div class="edu-year">EQF Level 4</div>
+        <ul class="edu-bullets">
+          <li>Hardware &amp; software development, IT infrastructure</li>
+          <li>IT support, system administration and network architecture</li>
+        </ul>
+      </div>
+      <div class="edu-card">
+        <div class="edu-degree">Leadership &amp; Cultural Training</div>
+        <div class="edu-school">Danfoss Internal</div>
+        <div class="edu-year">Global leadership programme</div>
+        <ul class="edu-bullets">
+          <li>Leading and motivating employees in global teams</li>
+          <li>Cross-cultural effectiveness — collaboration across approx. 70 countries</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT I DELIVER -->
+<section id="delivers">
+  <div class="section-inner">
+    <div class="section-label">Value</div>
+    <h2 class="section-title">What I Deliver</h2>
+    <p class="section-sub">The concrete outcomes an organisation can expect when I step into an IT Service &amp; Operations leadership role.</p>
+    <div class="divider"></div>
+
+    <div class="value-grid">
+
+      <div class="value-card">
+        <div class="value-icon">
+          <svg width="22" height="22" fill="none" stroke="#C8A96E" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h4 class="value-title">Technical leadership with a business focus</h4>
+        <p class="value-desc">I translate complex technical needs into solutions that create business value — whether the domain is IT infrastructure, communications platforms, mobility solutions or service delivery.</p>
+      </div>
+
+      <div class="value-card">
+        <div class="value-icon">
+          <svg width="22" height="22" fill="none" stroke="#C8A96E" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h4 class="value-title">Teams that thrive and perform</h4>
+        <p class="value-desc">I build psychological safety, set clear expectations and invest in skills development. The result is teams with high engagement, low attrition and strong professional pride — across any technical domain.</p>
+      </div>
+
+      <div class="value-card">
+        <div class="value-icon">
+          <svg width="22" height="22" fill="none" stroke="#C8A96E" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h4 class="value-title">Structured change management</h4>
+        <p class="value-desc">I have led large platform migrations and transformation projects with full change governance, stakeholder sign-off and structured testing. Change succeeds because it is well prepared.</p>
+      </div>
+
+      <div class="value-card">
+        <div class="value-icon">
+          <svg width="22" height="22" fill="none" stroke="#C8A96E" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <h4 class="value-title">Strong vendor partnerships</h4>
+        <p class="value-desc">I negotiate contracts, manage SLAs and ensure vendors deliver real business value. Strategy over brand — always focused on TCO and long-term relationships that scale with the business.</p>
+      </div>
+
+      <div class="value-card">
+        <div class="value-icon">
+          <svg width="22" height="22" fill="none" stroke="#C8A96E" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <h4 class="value-title">Continuous improvement</h4>
+        <p class="value-desc">Using Lean Six Sigma and Agile methods I identify inefficiency, eliminate waste and drive improvements that deliver documented results — across IT, support, processes and technical delivery.</p>
+      </div>
+
+      <div class="value-card">
+        <div class="value-icon">
+          <svg width="22" height="22" fill="none" stroke="#C8A96E" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h4 class="value-title">Global experience, local grounding</h4>
+        <p class="value-desc">30 years working with international teams across EMEA, Americas and APAC has given me the ability to align people from vastly different backgrounds around shared goals — regardless of time zone or culture.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- APPLICATIONS DASHBOARD -->
+<section id="applications" style="background:var(--white)">
+  <div class="section-inner">
+    <div class="section-label">Job Search 2026</div>
+    <h2 class="section-title">Applications Overview</h2>
+    <p class="section-sub">Active applications and their current status.</p>
+    <div class="divider"></div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-card-num">5</div><div class="stat-card-label">Applications sent</div></div>
+      <div class="stat-card"><div class="stat-card-num">3</div><div class="stat-card-label">Awaiting response</div></div>
+      <div class="stat-card"><div class="stat-card-num">0</div><div class="stat-card-label">Interviews</div></div>
+      <div class="stat-card"><div class="stat-card-num">2</div><div class="stat-card-label">Declined</div></div>
+    </div>
+
+    <div class="app-grid">
+
+      <div class="app-card">
+        <div class="app-index">1</div>
+        <div class="app-info">
+          <div class="app-role">Group Head of Technology, Digital &amp; Data</div>
+          <div class="app-company">Right to Dream FC Academy 🦆</div>
+          <div class="app-date">Applied 16 October 2026</div>
+        </div>
+        <div class="app-right">
+          <span class="status-badge status-sent">Sent</span>
+          <span class="app-days">22 days ago</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-index">2</div>
+        <div class="app-info">
+          <div class="app-role">Team Lead, Service Desk</div>
+          <div class="app-company">Andeby Jernbane A/S 🦆</div>
+          <div class="app-date">Applied 20 October 2026</div>
+        </div>
+        <div class="app-right">
+          <span class="status-badge status-rejected">Declined</span>
+          <span class="app-days">18 days ago</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-index">3</div>
+        <div class="app-info">
+          <div class="app-role">Manager, Integrated Product Support (IPS/ILS)</div>
+          <div class="app-company">Von And Forsvarsteknologi 🦆</div>
+          <div class="app-date">Applied 23 October 2026</div>
+        </div>
+        <div class="app-right">
+          <span class="status-badge status-sent">Sent</span>
+          <span class="app-days">15 days ago</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-index">4</div>
+        <div class="app-info">
+          <div class="app-role">Senior Manager, IT Supplier Excellence and Projects</div>
+          <div class="app-company">Andeby Energi A/S 🦆</div>
+          <div class="app-date">Applied 24 October 2026</div>
+        </div>
+        <div class="app-right">
+          <span class="status-badge status-sent">Sent</span>
+          <span class="app-days">14 days ago</span>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-index">5</div>
+        <div class="app-info">
+          <div class="app-role">Data Centre Service Operations Manager</div>
+          <div class="app-company">Gyro Gearloose IT Solutions 🦆</div>
+          <div class="app-date">Applied 27 October 2026</div>
+        </div>
+        <div class="app-right">
+          <span class="status-badge status-rejected">Declined</span>
+          <span class="app-days">11 days ago</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Søren Kim Hansen · <a href="https://linkedin.com/in/soren-kim-hansen-year2026" target="_blank">LinkedIn</a></p>
+  <p style="margin-top:0.5rem;font-size:0.75rem;opacity:0.5">Built with Claude · Last updated November 2026 · <a href="cv_showcase.html" style="color:rgba(255,255,255,0.4)">Danish version</a></p>
+</footer>
+
+</body>
+</html>
