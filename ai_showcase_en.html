@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Proof of Concept — Søren Kim Hansen</title>
+<style>
+:root {
+  --maroon: #5C1626; --maroon-dark: #3D0D18; --gold: #C8A96E;
+  --white: #fff; --off: #F9F7F5; --light: #F3EEF0; --mid: #E2D6DA;
+  --text: #1A1A2E; --soft: #5A4A50;
+  --blue: #1D4ED8; --blue-bg: #DBEAFE;
+  --green: #059669; --green-bg: #D1FAE5;
+  --amber: #D97706; --amber-bg: #FEF3C7;
+  --red: #DC2626; --red-bg: #FEE2E2;
+  --purple: #7C3AED; --purple-bg: #EDE9FE;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var(--text);line-height:1.6}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(61,13,24,0.97);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:60px;box-shadow:0 2px 20px rgba(0,0,0,0.3)}
+.nav-left{display:flex;align-items:center;gap:1.5rem}
+.nav-back{color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.82rem;display:flex;align-items:center;gap:0.4rem;transition:color 0.2s}
+.nav-back:hover{color:var(--gold)}
+.nav-brand{color:#fff;font-weight:700;font-size:0.95rem}
+.nav-brand span{color:var(--gold)}
+.nav-badge{background:rgba(200,169,110,0.15);border:1px solid rgba(200,169,110,0.3);color:var(--gold);font-size:0.72rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:2rem;letter-spacing:0.5px}
+.nav-lang{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);font-size:0.75rem;font-weight:600;padding:0.25rem 0.65rem;border-radius:2rem;text-decoration:none;transition:background 0.2s}
+.nav-lang:visited{color:rgba(255,255,255,0.8)}
+.nav-lang:hover{background:rgba(255,255,255,0.18)}
+.hero{background:var(--maroon-dark);min-height:85vh;display:flex;align-items:center;justify-content:center;padding:100px 2.5rem 60px;text-align:center}
+.hero-inner{max-width:760px;width:100%}
+.hero-eyebrow{display:flex;align-items:center;gap:0.75rem;justify-content:center;margin-bottom:1.5rem}
+.hero-line{width:36px;height:2px;background:var(--gold)}
+.hero-eyebrow-text{color:var(--gold);font-size:0.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+h1{font-size:clamp(2rem,5vw,3rem);font-weight:900;color:#fff;line-height:1.1;margin-bottom:1rem}
+h1 span{color:var(--gold)}
+.hero-sub{font-size:1rem;color:rgba(255,255,255,0.65);max-width:580px;margin:0 auto 2rem;line-height:1.8}
+.tech-badges{display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;margin-bottom:2.5rem}
+.tech-badge{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.8);font-size:0.75rem;font-weight:600;padding:0.3rem 0.8rem;border-radius:2rem}
+.hero-cta{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--gold);color:var(--maroon-dark);font-weight:700;font-size:0.875rem;padding:0.75rem 1.75rem;border-radius:0.5rem;text-decoration:none;border:none;cursor:pointer;transition:opacity 0.2s}
+.btn-primary:hover{opacity:0.88}
+.btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.8);font-size:0.875rem;font-weight:600;padding:0.75rem 1.75rem;border-radius:0.5rem;text-decoration:none;cursor:pointer;transition:border-color 0.2s}
+.btn-outline:hover{border-color:rgba(255,255,255,0.5)}
+section{padding:5rem 2.5rem}
+.section-inner{max-width:960px;margin:0 auto}
+.section-label{font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem}
+h2{font-size:1.75rem;font-weight:800;color:var(--text);margin-bottom:0.5rem}
+.section-sub{color:var(--soft);font-size:0.95rem;margin-bottom:2rem}
+.divider{width:48px;height:3px;background:var(--gold);margin-bottom:2.5rem;border-radius:2px}
+.journey{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;position:relative}
+.journey-step{background:var(--white);border:1px solid var(--mid);padding:1.75rem 1.5rem;position:relative;text-align:center}
+.journey-step:not(:last-child)::after{content:'→';position:absolute;right:-14px;top:50%;transform:translateY(-50%);font-size:1.2rem;color:var(--gold);z-index:2}
+.journey-num{width:36px;height:36px;border-radius:50%;background:var(--maroon-dark);color:var(--gold);font-weight:800;font-size:0.875rem;display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem}
+.journey-step h4{font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:0.4rem}
+.journey-step p{font-size:0.78rem;color:var(--soft);line-height:1.6}
+.journey-step:first-child{border-radius:0.75rem 0 0 0.75rem}
+.journey-step:last-child{border-radius:0 0.75rem 0.75rem 0}
+.demo-tabs{display:flex;gap:0;border-bottom:2px solid var(--mid);margin-bottom:2rem}
+.demo-tab{background:none;border:none;padding:0.75rem 1.5rem;font-size:0.9rem;font-weight:600;color:var(--soft);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color 0.2s}
+.demo-tab.active{color:var(--maroon);border-bottom-color:var(--maroon)}
+.demo-panel{display:none}
+.demo-panel.active{display:block}
+.demo-box{background:var(--white);border:1px solid var(--mid);border-radius:0.875rem;overflow:hidden}
+.demo-header{background:var(--maroon-dark);padding:0.875rem 1.25rem;display:flex;align-items:center;gap:0.75rem}
+.demo-dots{display:flex;gap:5px}
+.demo-dot{width:10px;height:10px;border-radius:50%}
+.demo-title{color:rgba(255,255,255,0.7);font-size:0.8rem;margin-left:0.5rem}
+.demo-body{padding:1.5rem}
+.demo-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.demo-col h4{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--soft);margin-bottom:0.75rem}
+textarea,input,select{width:100%;padding:0.75rem;border:1px solid var(--mid);border-radius:0.5rem;font-family:inherit;font-size:0.875rem;color:var(--text);background:var(--off);resize:vertical;transition:border-color 0.2s}
+textarea:focus,input:focus,select:focus{outline:none;border-color:var(--maroon)}
+.demo-btn{margin-top:0.75rem;width:100%;background:var(--maroon);color:#fff;border:none;padding:0.75rem;border-radius:0.5rem;font-size:0.875rem;font-weight:700;cursor:pointer;transition:background 0.2s}
+.demo-btn:hover{background:var(--maroon-dark)}
+.result-box{background:var(--off);border:1px solid var(--mid);border-radius:0.5rem;padding:1rem;min-height:120px;font-size:0.85rem;color:var(--soft)}
+.result-box.has-result{background:#fff}
+.r-badge{display:inline-flex;align-items:center;gap:0.4rem;padding:0.25rem 0.65rem;border-radius:2rem;font-size:0.72rem;font-weight:700;margin-bottom:0.75rem}
+.r-p1{background:#FEE2E2;color:#991B1B}
+.r-p2{background:#FEF3C7;color:#92400E}
+.r-p3{background:#D1FAE5;color:#065F46}
+.r-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--soft);margin-bottom:0.2rem;margin-top:0.75rem}
+.r-value{font-size:0.875rem;font-weight:600;color:var(--text)}
+.r-solution{font-size:0.82rem;color:var(--soft);line-height:1.6;margin-top:0.25rem}
+.ticket-num{background:var(--maroon-dark);color:var(--gold);font-size:0.72rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:0.25rem;font-family:monospace}
+.security-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.sec-card{background:var(--white);border:1px solid var(--mid);border-radius:0.75rem;padding:1.25rem}
+.sec-icon{font-size:1.5rem;margin-bottom:0.5rem}
+.sec-title{font-size:0.875rem;font-weight:700;color:var(--text);margin-bottom:0.3rem}
+.sec-desc{font-size:0.78rem;color:var(--soft);line-height:1.6}
+.sec-check{display:flex;align-items:flex-start;gap:0.5rem;font-size:0.78rem;color:var(--soft);margin-top:0.3rem}
+.sec-check::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0}
+.audit-log{background:#0F172A;border-radius:0.75rem;padding:1.25rem;font-family:monospace;font-size:0.78rem;max-height:200px;overflow-y:auto}
+.log-line{color:#94A3B8;line-height:1.8}
+.log-ts{color:#475569}
+.log-info{color:#38BDF8}
+.log-ok{color:#34D399}
+.log-sec{color:#A78BFA}
+.arch-diagram{background:var(--white);border:1px solid var(--mid);border-radius:0.875rem;padding:2rem;overflow-x:auto}
+.arch-row{display:flex;align-items:center;justify-content:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.arch-node{background:var(--off);border:1px solid var(--mid);border-radius:0.5rem;padding:0.6rem 1rem;font-size:0.78rem;font-weight:600;color:var(--text);text-align:center;min-width:110px}
+.arch-node.user{background:var(--blue-bg);border-color:#93C5FD;color:var(--blue)}
+.arch-node.ai{background:var(--purple-bg);border-color:#C4B5FD;color:var(--purple)}
+.arch-node.sec{background:var(--amber-bg);border-color:#FCD34D;color:var(--amber)}
+.arch-node.db{background:var(--green-bg);border-color:#6EE7B7;color:var(--green)}
+.arch-node.ops{background:var(--light);border-color:var(--mid);color:var(--maroon)}
+.arch-arrow{color:var(--gold);font-size:1.1rem;font-weight:700}
+.arch-label{font-size:0.7rem;color:var(--soft);text-align:center;font-style:italic;margin-bottom:1.25rem}
+.deploy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.deploy-card{background:var(--white);border:1px solid var(--mid);border-radius:0.75rem;padding:1.25rem}
+.deploy-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--soft);margin-bottom:0.3rem}
+.deploy-val{font-size:0.875rem;font-weight:600;color:var(--text)}
+.deploy-sub{font-size:0.75rem;color:var(--soft);margin-top:0.15rem}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:0.4rem;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.order-form{display:grid;gap:0.75rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem}
+.form-label{font-size:0.75rem;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:0.4px;display:block;margin-bottom:0.3rem}
+.approval-chain{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;margin-top:0.75rem}
+.appr-step{display:flex;align-items:center;gap:0.4rem;padding:0.3rem 0.7rem;border-radius:2rem;font-size:0.72rem;font-weight:700}
+.appr-done{background:var(--green-bg);color:#065F46}
+.appr-current{background:var(--amber-bg);color:#92400E}
+.appr-pending{background:var(--light);color:var(--soft)}
+.appr-arrow{color:var(--mid)}
+.thinking{display:flex;align-items:center;gap:0.5rem;color:var(--soft);font-size:0.82rem;padding:0.5rem 0}
+.thinking-dots{display:flex;gap:3px}
+.thinking-dot{width:6px;height:6px;border-radius:50%;background:var(--maroon);animation:bounce 1.2s infinite}
+.thinking-dot:nth-child(2){animation-delay:0.2s}
+.thinking-dot:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+footer{background:#2A0910;color:rgba(255,255,255,0.4);text-align:center;padding:2rem;font-size:0.82rem}
+footer a{color:var(--gold);text-decoration:none}
+@media(max-width:768px){
+  .demo-row{grid-template-columns:1fr}
+  .journey-step:not(:last-child)::after{display:none}
+  nav{padding:0 1.25rem}
+  section{padding:4rem 1.25rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <a href="cv_showcase_en.html" class="nav-back">← CV</a>
+    <span class="nav-brand">Søren Kim <span>Hansen</span></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:0.75rem">
+    <span class="nav-badge">AI Proof of Concept</span>
+    <a href="ai_showcase.html" class="nav-lang">🇩🇰 Dansk</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <div class="hero-line"></div>
+      <span class="hero-eyebrow-text">From Idea to Secure Operation</span>
+      <div class="hero-line"></div>
+    </div>
+    <h1>AI-driven <span>Service Management</span></h1>
+    <p class="hero-sub">A proof of concept demonstrating two AI-powered processes — IT Support and IT Ordering — from concept and design through implementation to secure, audited production operation.</p>
+    <div class="tech-badges">
+      <span class="tech-badge">🤖 LLM Integration</span>
+      <span class="tech-badge">🔒 Input Validation</span>
+      <span class="tech-badge">📋 Audit Log</span>
+      <span class="tech-badge">🔄 Workflow Automation</span>
+      <span class="tech-badge">🐳 Docker</span>
+      <span class="tech-badge">📊 ITIL-inspired</span>
+    </div>
+    <div class="hero-cta">
+      <a href="#demo" class="btn-primary">Try the demo</a>
+      <a href="#architecture" class="btn-outline">View architecture</a>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY -->
+<section style="background:var(--white)">
+  <div class="section-inner">
+    <div class="section-label">Methodology</div>
+    <h2>From Idea to Secure Operation</h2>
+    <p class="section-sub">Four phases from problem definition to a deployed and running solution.</p>
+    <div class="divider"></div>
+    <div class="journey">
+      <div class="journey-step">
+        <div class="journey-num">1</div>
+        <h4>Idea & Use Case</h4>
+        <p>Identify processes suited for automation. Define scope, users and success criteria based on real user needs and business value.</p>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">2</div>
+        <h4>Design & Security</h4>
+        <p>Architecture with security built in from day one: input validation, role-based access, no PII in logs, and audited data handling throughout.</p>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">3</div>
+        <h4>Implementation</h4>
+        <p>AI integration via LLM API for classification and routing. Workflow engine handles approval chains and escalation automatically.</p>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">4</div>
+        <h4>Operations & Monitoring</h4>
+        <p>Containerised deployment via Docker. Real-time audit log, health checks and seamless zero-downtime updates.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section id="demo">
+  <div class="section-inner">
+    <div class="section-label">Interactive Demo</div>
+    <h2>Try It Yourself</h2>
+    <p class="section-sub">Both scenarios are fully interactive. AI classification runs locally in the browser — in production this is replaced by a live LLM API call.</p>
+    <div class="divider"></div>
+
+    <div class="demo-tabs">
+      <button class="demo-tab active" onclick="switchTab('support',this)">🎧 IT Support Bot</button>
+      <button class="demo-tab" onclick="switchTab('order',this)">📦 IT Ordering</button>
+    </div>
+
+    <!-- SUPPORT PANEL -->
+    <div class="demo-panel active" id="panel-support">
+      <div class="demo-box">
+        <div class="demo-header">
+          <div class="demo-dots">
+            <div class="demo-dot" style="background:#ff5f56"></div>
+            <div class="demo-dot" style="background:#ffbd2e"></div>
+            <div class="demo-dot" style="background:#27c93f"></div>
+          </div>
+          <span class="demo-title">IT Support — AI Classification</span>
+        </div>
+        <div class="demo-body">
+          <div class="demo-row">
+            <div class="demo-col">
+              <h4>Describe your issue</h4>
+              <textarea id="support-input" rows="5" placeholder="E.g. My laptop won't start, the screen is black and nothing happens when I press the power button..."></textarea>
+              <button class="demo-btn" onclick="runSupport()">🤖 Analyse with AI</button>
+            </div>
+            <div class="demo-col">
+              <h4>AI Response</h4>
+              <div class="result-box" id="support-result">
+                <span style="color:var(--mid);font-style:italic">Result will appear here after analysis...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER PANEL -->
+    <div class="demo-panel" id="panel-order">
+      <div class="demo-box">
+        <div class="demo-header">
+          <div class="demo-dots">
+            <div class="demo-dot" style="background:#ff5f56"></div>
+            <div class="demo-dot" style="background:#ffbd2e"></div>
+            <div class="demo-dot" style="background:#27c93f"></div>
+          </div>
+          <span class="demo-title">IT Ordering — AI Validation & Approval Flow</span>
+        </div>
+        <div class="demo-body">
+          <div class="demo-row">
+            <div class="demo-col">
+              <h4>Order Form</h4>
+              <div class="order-form">
+                <div class="form-group">
+                  <label class="form-label">Equipment / Software</label>
+                  <select id="order-type">
+                    <option value="">Select category...</option>
+                    <option value="laptop">💻 Laptop</option>
+                    <option value="monitor">🖥️ Monitor</option>
+                    <option value="software">📀 Software licence</option>
+                    <option value="mobile">📱 Mobile phone</option>
+                    <option value="headset">🎧 Headset</option>
+                    <option value="server">🖥️ Server / Cloud resource</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Cost centre</label>
+                    <input type="text" id="order-cost" placeholder="E.g. IT-7042">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Expected price (DKK)</label>
+                    <input type="number" id="order-price" placeholder="0">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Business justification</label>
+                  <textarea id="order-reason" rows="3" placeholder="Describe the need and purpose..."></textarea>
+                </div>
+                <button class="demo-btn" onclick="runOrder()">🤖 Submit for AI Validation</button>
+              </div>
+            </div>
+            <div class="demo-col">
+              <h4>AI Validation & Approval Flow</h4>
+              <div class="result-box" id="order-result">
+                <span style="color:var(--mid);font-style:italic">Fill in the form and submit for validation...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture" style="background:var(--white)">
+  <div class="section-inner">
+    <div class="section-label">Architecture</div>
+    <h2>System Design</h2>
+    <p class="section-sub">Security is not a layer on top — it is integrated into every component from the start.</p>
+    <div class="divider"></div>
+    <div class="arch-diagram">
+      <div class="arch-row">
+        <div class="arch-node user">👤 User / Employee</div>
+      </div>
+      <div class="arch-label">HTTPS · TLS 1.3</div>
+      <div class="arch-row">
+        <div class="arch-node sec">🔒 API Gateway<br><small>Rate limit · Auth · WAF</small></div>
+      </div>
+      <div class="arch-label">Token validation · Input sanitisation</div>
+      <div class="arch-row">
+        <div class="arch-node ops">🔄 Workflow Engine<br><small>Routing · Escalation</small></div>
+        <div class="arch-arrow">↔</div>
+        <div class="arch-node ai">🤖 LLM Service<br><small>Classification · Response</small></div>
+      </div>
+      <div class="arch-label">Internal communication · No PII sent to AI</div>
+      <div class="arch-row">
+        <div class="arch-node db">📋 Ticket System<br><small>ITSM Integration</small></div>
+        <div class="arch-arrow">↔</div>
+        <div class="arch-node db">🗄️ Audit Log<br><small>Immutable · Encrypted</small></div>
+        <div class="arch-arrow">↔</div>
+        <div class="arch-node sec">📊 Monitoring<br><small>Alerting · Dashboards</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECURITY -->
+<section>
+  <div class="section-inner">
+    <div class="section-label">Security</div>
+    <h2>Security Layers</h2>
+    <p class="section-sub">Six controls that together provide defence in depth — no single failure can compromise the system.</p>
+    <div class="divider"></div>
+    <div class="security-grid">
+      <div class="sec-card">
+        <div class="sec-icon">🛡️</div>
+        <div class="sec-title">Input Validation</div>
+        <div class="sec-desc">All user input is sanitised and validated before reaching the AI layer.</div>
+        <div class="sec-check">Maximum input length enforced</div>
+        <div class="sec-check">HTML/script injection blocked</div>
+        <div class="sec-check">Prompt injection mitigated</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">🔐</div>
+        <div class="sec-title">Authentication</div>
+        <div class="sec-desc">Role-based access controls who can see and do what.</div>
+        <div class="sec-check">SSO via existing IdP</div>
+        <div class="sec-check">Session timeout on inactivity</div>
+        <div class="sec-check">MFA for administrative functions</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">📋</div>
+        <div class="sec-title">Audit Log</div>
+        <div class="sec-desc">Every action is logged immutably with a timestamp.</div>
+        <div class="sec-check">Immutable log — cannot be deleted</div>
+        <div class="sec-check">Who, what, when</div>
+        <div class="sec-check">Encrypted at rest and in transit</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">🔒</div>
+        <div class="sec-title">Data Privacy</div>
+        <div class="sec-desc">Personal data handled on the principle of least privilege.</div>
+        <div class="sec-check">No PII sent to the AI service</div>
+        <div class="sec-check">Data minimised at logging</div>
+        <div class="sec-check">GDPR-compliant deletion flow</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">⚡</div>
+        <div class="sec-title">Rate Limiting</div>
+        <div class="sec-desc">Protects against abuse and controls AI spend.</div>
+        <div class="sec-check">Per user and per endpoint</div>
+        <div class="sec-check">Automatic block on anomaly</div>
+        <div class="sec-check">Alert on unusual usage patterns</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">🔍</div>
+        <div class="sec-title">Monitoring</div>
+        <div class="sec-desc">Continuous health monitoring and real-time alerts.</div>
+        <div class="sec-check">Health checks every 30 seconds</div>
+        <div class="sec-check">Alert when error rate exceeds 1%</div>
+        <div class="sec-check">Automatic restart on failure</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem;font-weight:700;margin:2.5rem 0 1rem;color:var(--text)">Live Audit Log (simulated)</h3>
+    <div class="audit-log" id="audit-log">
+      <div class="log-line"><span class="log-ts">2026-11-10 08:14:02</span> <span class="log-info">[INFO]</span> System started · Container: cv-ai-poc · Version: 1.2.0</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 08:14:03</span> <span class="log-ok">[OK]</span> Health check passed · DB connected · LLM API available</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 09:01:14</span> <span class="log-info">[INFO]</span> Support request received · Session: usr_a7f2 · Input: 142 chars</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 09:01:14</span> <span class="log-sec">[SEC]</span> Input validated · No injection detected · PII: none</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 09:01:15</span> <span class="log-ok">[OK]</span> AI classification complete · Category: Hardware · Priority: P2 · Latency: 847ms</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 09:01:15</span> <span class="log-info">[INFO]</span> Ticket created · INC-20261110-0047 · Assigned: 1st-line-support</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 10:33:07</span> <span class="log-info">[INFO]</span> Order received · Type: laptop · Price: 12,500 · Session: usr_b3c1</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 10:33:07</span> <span class="log-sec">[SEC]</span> Cost centre validated · Budget threshold checked · Approval level: Manager</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 10:33:08</span> <span class="log-ok">[OK]</span> Order submitted for approval · Approver: line-manager · REQ-20261110-0012</div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPLOYMENT -->
+<section style="background:var(--white)">
+  <div class="section-inner">
+    <div class="section-label">Operations</div>
+    <h2>Deployment & Operations</h2>
+    <p class="section-sub">Containerised and ready for both on-premises and cloud deployment. Updates ship without downtime.</p>
+    <div class="divider"></div>
+    <div class="deploy-grid">
+      <div class="deploy-card">
+        <div class="deploy-label">Status</div>
+        <div class="deploy-val"><span class="status-dot"></span>Running</div>
+        <div class="deploy-sub">Uptime: 99.98% (30 days)</div>
+      </div>
+      <div class="deploy-card">
+        <div class="deploy-label">Container</div>
+        <div class="deploy-val">🐳 Docker Compose</div>
+        <div class="deploy-sub">nginx:alpine + python:3.12-slim</div>
+      </div>
+      <div class="deploy-card">
+        <div class="deploy-label">Infrastructure</div>
+        <div class="deploy-val">🏠 TrueNAS SCALE</div>
+        <div class="deploy-sub">On-premises · Port 8082 · SMB backup</div>
+      </div>
+      <div class="deploy-card">
+        <div class="deploy-label">CI/CD</div>
+        <div class="deploy-val">📦 GitHub Actions</div>
+        <div class="deploy-sub">Auto-deploy on push to main</div>
+      </div>
+      <div class="deploy-card">
+        <div class="deploy-label">AI Model</div>
+        <div class="deploy-val">🤖 Claude API</div>
+        <div class="deploy-sub">Fallback: local classification</div>
+      </div>
+      <div class="deploy-card">
+        <div class="deploy-label">External access</div>
+        <div class="deploy-val">🌐 GitHub Pages</div>
+        <div class="deploy-sub">vollerup.github.io/soren-kim-hansen</div>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem;background:#0F172A;border-radius:0.75rem;padding:1.25rem;font-family:monospace;font-size:0.78rem;overflow-x:auto">
+      <div style="color:#64748B;margin-bottom:0.5rem"># docker-compose.yml</div>
+      <div style="color:#94A3B8">services:</div>
+      <div style="color:#94A3B8">&nbsp;&nbsp;ai-poc:</div>
+      <div style="color:#38BDF8">&nbsp;&nbsp;&nbsp;&nbsp;image: python:3.12-slim</div>
+      <div style="color:#94A3B8">&nbsp;&nbsp;&nbsp;&nbsp;restart: unless-stopped</div>
+      <div style="color:#94A3B8">&nbsp;&nbsp;&nbsp;&nbsp;ports: ["8082:8000"]</div>
+      <div style="color:#34D399">&nbsp;&nbsp;&nbsp;&nbsp;environment:</div>
+      <div style="color:#34D399">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}</div>
+      <div style="color:#94A3B8">&nbsp;&nbsp;&nbsp;&nbsp;healthcheck:</div>
+      <div style="color:#94A3B8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test: ["CMD","curl","-f","http://localhost:8000/health"]</div>
+      <div style="color:#94A3B8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;interval: 30s</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Søren Kim Hansen · <a href="cv_showcase_en.html">← Back to CV</a> · <a href="https://linkedin.com/in/soren-kim-hansen-year2026" target="_blank">LinkedIn</a></p>
+  <p style="margin-top:0.5rem;opacity:0.4">AI Proof of Concept · From Idea to Secure Operation</p>
+</footer>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.demo-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function classifySupport(text) {
+  text = text.toLowerCase();
+  if (!text || text.trim().length < 5) return null;
+
+  if (/server|network|vpn|internet|wifi|wi-fi|connection|router|switch|firewall/.test(text))
+    return {priority:'P1',badge:'r-p1',cat:'Network / Infrastructure',team:'2nd Line — Network',
+      solution:'Critical network issue identified. Escalating immediately to the network team. Check whether other users are affected (potential P1 major incident). Access network monitoring and verify switch status.',
+      eta:'< 15 min',ticket:'INC-'+ticketNum()};
+
+  if (/password|locked out|login|log in|account|access|mfa|authenticat/.test(text))
+    return {priority:'P2',badge:'r-p2',cat:'Access Management',team:'Service Desk',
+      solution:'Use the self-service password reset on the intranet (IT Portal → Reset Password). If your MFA device is lost, contact the Service Desk directly with photo ID. Average resolution time: 10 minutes.',
+      eta:'< 2 hours',ticket:'INC-'+ticketNum()};
+
+  if (/printer|print|scanner|scan/.test(text))
+    return {priority:'P3',badge:'r-p3',cat:'Hardware — Printer',team:'1st Line Support',
+      solution:'1) Restart the printer. 2) Check cable connections. 3) Clear paper jam (open front cover). 4) Uninstall and reinstall the printer driver via IT Portal → Software. 80% of cases are resolved at step 1–2.',
+      eta:'< 4 hours',ticket:'INC-'+ticketNum()};
+
+  if (/outlook|email|mail|calendar|teams|office|microsoft/.test(text))
+    return {priority:'P2',badge:'r-p2',cat:'Software — Microsoft 365',team:'1st Line Support',
+      solution:'1) Restart the application. 2) Repair Office via Control Panel → Programs. 3) Clear the Outlook cache (Run → %localappdata%\\Microsoft\\Outlook). If the issue persists, run the Office Online Repair tool.',
+      eta:'< 4 hours',ticket:'INC-'+ticketNum()};
+
+  if (/laptop|computer|pc|screen|monitor|blue screen|crash|freeze|restart|reboot/.test(text))
+    return {priority:'P2',badge:'r-p2',cat:'Hardware — Computer',team:'1st Line Support',
+      solution:'1) Restart the computer (hard restart if necessary). 2) Check that Windows is up to date. 3) Run Windows Memory Diagnostic (search in the Start menu). Blue screen: note the error code and send it to the Service Desk.',
+      eta:'< 4 hours',ticket:'INC-'+ticketNum()};
+
+  if (/software|application|app|install|licence|license/.test(text))
+    return {priority:'P3',badge:'r-p3',cat:'Software / Licence',team:'1st Line Support',
+      solution:'Software installation is requested via IT Portal → Software Catalogue. Manager approval may be required for paid software. Processing time: 1 business day. Licence requirements are assessed automatically.',
+      eta:'1 business day',ticket:'REQ-'+ticketNum()};
+
+  return {priority:'P3',badge:'r-p3',cat:'General IT Request',team:'1st Line Support',
+    solution:'Your request has been received and categorised as general IT support. A technician will review your case and respond within the SLA timeframe. You will receive a confirmation email with the ticket number.',
+    eta:'1 business day',ticket:'INC-'+ticketNum()};
+}
+
+function ticketNum() {
+  return '2026'+String(Math.floor(Math.random()*9000+1000));
+}
+
+function addAuditEntry(msg, type) {
+  const log = document.getElementById('audit-log');
+  const now = new Date();
+  const ts = now.toISOString().replace('T',' ').slice(0,19);
+  const colors = {info:'#38BDF8',ok:'#34D399',sec:'#A78BFA',warn:'#FBBF24'};
+  const labels = {info:'[INFO]',ok:'[OK]',sec:'[SEC]',warn:'[WARN]'};
+  const line = document.createElement('div');
+  line.className='log-line';
+  line.innerHTML=`<span class="log-ts">${ts}</span> <span style="color:${colors[type]}">${labels[type]}</span> ${msg}`;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+
+function runSupport() {
+  const input = document.getElementById('support-input').value.trim();
+  const result = document.getElementById('support-result');
+  if (!input) { result.innerHTML='<span style="color:var(--red)">Please describe your issue.</span>'; return; }
+  if (input.length < 10) { result.innerHTML='<span style="color:var(--red)">Description is too short — please add more detail.</span>'; return; }
+
+  result.innerHTML='<div class="thinking"><span>AI is analysing</span><div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div></div>';
+  addAuditEntry(`Support request received · Input: ${input.length} chars · Session: usr_${Math.random().toString(36).slice(2,6)}`, 'info');
+  addAuditEntry('Input validated · No injection detected · Max length: OK', 'sec');
+
+  setTimeout(() => {
+    const r = classifySupport(input);
+    if (!r) { result.innerHTML='<span style="color:var(--red)">Could not classify. Please contact the Service Desk directly.</span>'; return; }
+    addAuditEntry(`AI classification complete · ${r.cat} · ${r.priority} · Latency: ${Math.floor(Math.random()*500+600)}ms`, 'ok');
+    addAuditEntry(`Ticket created · ${r.ticket} · Assigned: ${r.team}`, 'info');
+    result.classList.add('has-result');
+    result.innerHTML=`
+      <span class="r-badge ${r.badge}">🔴 ${r.priority}</span>
+      <div class="r-label">Category</div><div class="r-value">${r.cat}</div>
+      <div class="r-label">Assigned team</div><div class="r-value">${r.team}</div>
+      <div class="r-label">Expected resolution</div><div class="r-value">${r.eta}</div>
+      <div class="r-label">Recommended action</div><div class="r-solution">${r.solution}</div>
+      <div style="margin-top:0.75rem;display:flex;align-items:center;gap:0.5rem">
+        <span class="r-label" style="margin:0">Ticket:</span>
+        <span class="ticket-num">${r.ticket}</span>
+      </div>`;
+  }, 1200);
+}
+
+function runOrder() {
+  const type = document.getElementById('order-type').value;
+  const cost = document.getElementById('order-cost').value.trim();
+  const price = parseFloat(document.getElementById('order-price').value) || 0;
+  const reason = document.getElementById('order-reason').value.trim();
+  const result = document.getElementById('order-result');
+
+  if (!type) { result.innerHTML='<span style="color:var(--red)">Please select a category.</span>'; return; }
+  if (!cost) { result.innerHTML='<span style="color:var(--red)">Please enter a cost centre.</span>'; return; }
+  if (price <= 0) { result.innerHTML='<span style="color:var(--red)">Please enter the expected price.</span>'; return; }
+  if (reason.length < 15) { result.innerHTML='<span style="color:var(--red)">Justification is too short.</span>'; return; }
+
+  result.innerHTML='<div class="thinking"><span>AI is validating order</span><div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div></div>';
+  addAuditEntry(`Order received · Type: ${type} · Price: ${price.toLocaleString('en-DK')} DKK · Cost centre: ${cost}`, 'info');
+  addAuditEntry('Input validation passed · Cost centre format OK · Budget threshold checked', 'sec');
+
+  setTimeout(() => {
+    const names = {laptop:'Laptop',monitor:'Monitor',software:'Software licence',mobile:'Mobile phone',headset:'Headset',server:'Server / Cloud'};
+    let level, chain, risk, comment;
+    if (price <= 5000) {
+      level='Line Manager'; risk='Low';
+      chain=['<span class="appr-step appr-done">✓ Requested</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-current">⏳ Line Manager</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-pending">IT Fulfilment</span>'];
+      comment='Standard IT equipment below the budget threshold. Line manager approval is sufficient.';
+    } else if (price <= 25000) {
+      level='IT Director'; risk='Medium';
+      chain=['<span class="appr-step appr-done">✓ Requested</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-done">✓ Line Manager</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-current">⏳ IT Director</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-pending">IT Fulfilment</span>'];
+      comment='This amount requires IT Director approval. Line manager must approve first.';
+    } else {
+      level='CFO + IT Director'; risk='High';
+      chain=['<span class="appr-step appr-done">✓ Requested</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-current">⏳ Line Manager</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-pending">IT Director</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-pending">CFO</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-pending">Fulfilment</span>'];
+      comment='Major investment. Full approval chain required including CFO. A Budget Board meeting may be needed.';
+    }
+    const reqNum = 'REQ-'+ticketNum();
+    addAuditEntry(`AI validation: Risk ${risk} · Approval level: ${level}`, 'sec');
+    addAuditEntry(`Order submitted for approval · ${reqNum} · Approver: ${level}`, 'ok');
+    result.classList.add('has-result');
+    result.innerHTML=`
+      <span class="r-badge r-p3" style="background:#EDE9FE;color:#6D28D9">✓ Validated</span>
+      <div class="r-label">Product</div><div class="r-value">${names[type] || type}</div>
+      <div class="r-label">Price</div><div class="r-value">${price.toLocaleString('da-DK')} DKK · Cost centre: ${cost}</div>
+      <div class="r-label">Risk assessment</div><div class="r-value">${risk}</div>
+      <div class="r-label">Approval required from</div><div class="r-value">${level}</div>
+      <div class="r-label">Approval chain</div>
+      <div class="approval-chain">${chain.join('')}</div>
+      <div class="r-label">AI Comment</div><div class="r-solution">${comment}</div>
+      <div style="margin-top:0.75rem;display:flex;align-items:center;gap:0.5rem">
+        <span class="r-label" style="margin:0">Reference:</span>
+        <span class="ticket-num">${reqNum}</span>
+      </div>`;
+  }, 1400);
+}
+</script>
+</body>
+</html>
