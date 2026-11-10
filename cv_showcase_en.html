@@ -58,6 +58,7 @@
     padding: 0.25rem 0.65rem; border-radius: 2rem; text-decoration: none;
     transition: background 0.2s;
   }
+  .nav-lang:visited { color: rgba(255,255,255,0.8); }
   .nav-lang:hover { background: rgba(255,255,255,0.18); }
 
   /* ── HERO ── */
@@ -181,10 +182,20 @@
   .cert-active { color: #C8A96E !important; font-weight: 700; }
 
   /* ── DASHBOARD ── */
-  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
-  .stat-card { background: var(--white); border: 1px solid var(--mid); border-radius: 0.75rem; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.25rem; }
-  .stat-card-num { font-size: 2rem; font-weight: 800; color: var(--maroon); }
-  .stat-card-label { font-size: 0.8rem; color: var(--text-soft); }
+  .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .dash-card { background: var(--white); border: 1px solid var(--mid); border-radius: 0.875rem; padding: 1.5rem 1.25rem 1.25rem; position: relative; overflow: hidden; transition: box-shadow 0.2s, transform 0.2s; }
+  .dash-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.09); transform: translateY(-2px); }
+  .dash-card-accent { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .dash-card-icon { font-size: 1.4rem; margin-bottom: 0.6rem; }
+  .dash-card-num { font-size: 2.4rem; font-weight: 800; line-height: 1; margin-bottom: 0.4rem; }
+  .dash-card-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; }
+  .dash-dist { margin-bottom: 2.5rem; }
+  .dash-dist-title { font-size: 0.72rem; font-weight: 700; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.6rem; }
+  .dash-dist-bar { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--light); }
+  .dash-dist-seg { transition: width 0.6s ease; }
+  .dash-dist-legend { display: flex; gap: 1.25rem; margin-top: 0.75rem; flex-wrap: wrap; }
+  .dash-dist-legend span { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--text-soft); }
+  .dash-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .app-grid { display: grid; gap: 1rem; }
   .app-card {
     background: var(--white); border: 1px solid var(--mid); border-radius: 0.75rem; padding: 1.25rem 1.5rem;
@@ -262,6 +273,7 @@
     <li><a href="#skills">Skills</a></li>
     <li><a href="#delivers">What I Deliver</a></li>
     <li><a href="#applications">Applications</a></li>
+    <li><a href="ai_showcase_en.html">🤖 AI Project</a></li>
   </ul>
   <a href="cv_showcase.html" class="nav-lang">🇩🇰 Dansk</a>
 </nav>
@@ -650,11 +662,53 @@
     <p class="section-sub">Active applications and their current status.</p>
     <div class="divider"></div>
 
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-card-num">5</div><div class="stat-card-label">Applications sent</div></div>
-      <div class="stat-card"><div class="stat-card-num">3</div><div class="stat-card-label">Awaiting response</div></div>
-      <div class="stat-card"><div class="stat-card-num">0</div><div class="stat-card-label">Interviews</div></div>
-      <div class="stat-card"><div class="stat-card-num">2</div><div class="stat-card-label">Declined</div></div>
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="dash-card-accent" style="background:var(--maroon-dark)"></div>
+        <div class="dash-card-icon">📤</div>
+        <div class="dash-card-num" style="color:var(--maroon-dark)">5</div>
+        <div class="dash-card-label" style="color:var(--text-soft)">Total sent</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-accent" style="background:#1D4ED8"></div>
+        <div class="dash-card-icon">🔵</div>
+        <div class="dash-card-num" style="color:#1D4ED8">3</div>
+        <div class="dash-card-label" style="color:#1D4ED8">Active</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-accent" style="background:#DC2626"></div>
+        <div class="dash-card-icon">✖️</div>
+        <div class="dash-card-num" style="color:#DC2626">2</div>
+        <div class="dash-card-label" style="color:#DC2626">Declined</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-accent" style="background:#D97706"></div>
+        <div class="dash-card-icon">💬</div>
+        <div class="dash-card-num" style="color:#D97706">0</div>
+        <div class="dash-card-label" style="color:#D97706">Interviews</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-accent" style="background:#059669"></div>
+        <div class="dash-card-icon">🏆</div>
+        <div class="dash-card-num" style="color:#059669">0</div>
+        <div class="dash-card-label" style="color:#059669">Offers</div>
+      </div>
+    </div>
+
+    <div class="dash-dist">
+      <div class="dash-dist-title">Distribution</div>
+      <div class="dash-dist-bar">
+        <div class="dash-dist-seg" style="width:60%;background:#1D4ED8"></div>
+        <div class="dash-dist-seg" style="width:40%;background:#DC2626"></div>
+        <div class="dash-dist-seg" style="width:0%;background:#D97706"></div>
+        <div class="dash-dist-seg" style="width:0%;background:#059669"></div>
+      </div>
+      <div class="dash-dist-legend">
+        <span><span class="dash-legend-dot" style="background:#1D4ED8"></span> Active (3)</span>
+        <span><span class="dash-legend-dot" style="background:#DC2626"></span> Declined (2)</span>
+        <span><span class="dash-legend-dot" style="background:#D97706"></span> Interview (0)</span>
+        <span><span class="dash-legend-dot" style="background:#059669"></span> Offer (0)</span>
+      </div>
     </div>
 
     <div class="app-grid">
@@ -667,7 +721,7 @@
           <div class="app-date">Applied 16 October 2026</div>
         </div>
         <div class="app-right">
-          <span class="status-badge status-sent">Sent</span>
+          <span class="status-badge status-sent">Active</span>
           <span class="app-days">22 days ago</span>
         </div>
       </div>
@@ -693,7 +747,7 @@
           <div class="app-date">Applied 23 October 2026</div>
         </div>
         <div class="app-right">
-          <span class="status-badge status-sent">Sent</span>
+          <span class="status-badge status-sent">Active</span>
           <span class="app-days">15 days ago</span>
         </div>
       </div>
@@ -706,7 +760,7 @@
           <div class="app-date">Applied 24 October 2026</div>
         </div>
         <div class="app-right">
-          <span class="status-badge status-sent">Sent</span>
+          <span class="status-badge status-sent">Active</span>
           <span class="app-days">14 days ago</span>
         </div>
       </div>
