@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Proof of Concept — Søren Kim Hansen</title>
+<style>
+:root {
+  --maroon: #5C1626; --maroon-dark: #3D0D18; --gold: #C8A96E;
+  --white: #fff; --off: #F9F7F5; --light: #F3EEF0; --mid: #E2D6DA;
+  --text: #1A1A2E; --soft: #5A4A50;
+  --blue: #1D4ED8; --blue-bg: #DBEAFE;
+  --green: #059669; --green-bg: #D1FAE5;
+  --amber: #D97706; --amber-bg: #FEF3C7;
+  --red: #DC2626; --red-bg: #FEE2E2;
+  --purple: #7C3AED; --purple-bg: #EDE9FE;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--off);color:var(--text);line-height:1.6}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(61,13,24,0.97);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:60px;box-shadow:0 2px 20px rgba(0,0,0,0.3)}
+.nav-left{display:flex;align-items:center;gap:1.5rem}
+.nav-back{color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.82rem;display:flex;align-items:center;gap:0.4rem;transition:color 0.2s}
+.nav-back:hover{color:var(--gold)}
+.nav-brand{color:#fff;font-weight:700;font-size:0.95rem}
+.nav-brand span{color:var(--gold)}
+.nav-badge{background:rgba(200,169,110,0.15);border:1px solid rgba(200,169,110,0.3);color:var(--gold);font-size:0.72rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:2rem;letter-spacing:0.5px}
+
+/* HERO */
+.hero{background:var(--maroon-dark);min-height:85vh;display:flex;align-items:center;justify-content:center;padding:100px 2.5rem 60px;text-align:center}
+.hero-inner{max-width:760px;width:100%}
+.hero-eyebrow{display:flex;align-items:center;gap:0.75rem;justify-content:center;margin-bottom:1.5rem}
+.hero-line{width:36px;height:2px;background:var(--gold)}
+.hero-eyebrow-text{color:var(--gold);font-size:0.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+h1{font-size:clamp(2rem,5vw,3rem);font-weight:900;color:#fff;line-height:1.1;margin-bottom:1rem}
+h1 span{color:var(--gold)}
+.hero-sub{font-size:1rem;color:rgba(255,255,255,0.65);max-width:580px;margin:0 auto 2rem;line-height:1.8}
+.tech-badges{display:flex;flex-wrap:wrap;gap:0.5rem;justify-content:center;margin-bottom:2.5rem}
+.tech-badge{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.8);font-size:0.75rem;font-weight:600;padding:0.3rem 0.8rem;border-radius:2rem}
+.hero-cta{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--gold);color:var(--maroon-dark);font-weight:700;font-size:0.875rem;padding:0.75rem 1.75rem;border-radius:0.5rem;text-decoration:none;border:none;cursor:pointer;transition:opacity 0.2s}
+.btn-primary:hover{opacity:0.88}
+.btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.25);color:rgba(255,255,255,0.8);font-size:0.875rem;font-weight:600;padding:0.75rem 1.75rem;border-radius:0.5rem;text-decoration:none;cursor:pointer;transition:border-color 0.2s}
+.btn-outline:hover{border-color:rgba(255,255,255,0.5)}
+
+/* SECTIONS */
+section{padding:5rem 2.5rem}
+.section-inner{max-width:960px;margin:0 auto}
+.section-label{font-size:0.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem}
+h2{font-size:1.75rem;font-weight:800;color:var(--text);margin-bottom:0.5rem}
+.section-sub{color:var(--soft);font-size:0.95rem;margin-bottom:2rem}
+.divider{width:48px;height:3px;background:var(--gold);margin-bottom:2.5rem;border-radius:2px}
+
+/* JOURNEY */
+.journey{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;position:relative}
+.journey-step{background:var(--white);border:1px solid var(--mid);padding:1.75rem 1.5rem;position:relative;text-align:center}
+.journey-step:not(:last-child)::after{content:'→';position:absolute;right:-14px;top:50%;transform:translateY(-50%);font-size:1.2rem;color:var(--gold);z-index:2}
+.journey-num{width:36px;height:36px;border-radius:50%;background:var(--maroon-dark);color:var(--gold);font-weight:800;font-size:0.875rem;display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem}
+.journey-step h4{font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:0.4rem}
+.journey-step p{font-size:0.78rem;color:var(--soft);line-height:1.6}
+.journey-step:first-child{border-radius:0.75rem 0 0 0.75rem}
+.journey-step:last-child{border-radius:0 0.75rem 0.75rem 0}
+
+/* DEMO TABS */
+.demo-tabs{display:flex;gap:0;border-bottom:2px solid var(--mid);margin-bottom:2rem}
+.demo-tab{background:none;border:none;padding:0.75rem 1.5rem;font-size:0.9rem;font-weight:600;color:var(--soft);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color 0.2s}
+.demo-tab.active{color:var(--maroon);border-bottom-color:var(--maroon)}
+.demo-panel{display:none}
+.demo-panel.active{display:block}
+
+/* SUPPORT DEMO */
+.demo-box{background:var(--white);border:1px solid var(--mid);border-radius:0.875rem;overflow:hidden}
+.demo-header{background:var(--maroon-dark);padding:0.875rem 1.25rem;display:flex;align-items:center;gap:0.75rem}
+.demo-dots{display:flex;gap:5px}
+.demo-dot{width:10px;height:10px;border-radius:50%}
+.demo-title{color:rgba(255,255,255,0.7);font-size:0.8rem;margin-left:0.5rem}
+.demo-body{padding:1.5rem}
+.demo-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.demo-col{}
+.demo-col h4{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--soft);margin-bottom:0.75rem}
+textarea,input,select{width:100%;padding:0.75rem;border:1px solid var(--mid);border-radius:0.5rem;font-family:inherit;font-size:0.875rem;color:var(--text);background:var(--off);resize:vertical;transition:border-color 0.2s}
+textarea:focus,input:focus,select:focus{outline:none;border-color:var(--maroon)}
+.demo-btn{margin-top:0.75rem;width:100%;background:var(--maroon);color:#fff;border:none;padding:0.75rem;border-radius:0.5rem;font-size:0.875rem;font-weight:700;cursor:pointer;transition:background 0.2s}
+.demo-btn:hover{background:var(--maroon-dark)}
+.result-box{background:var(--off);border:1px solid var(--mid);border-radius:0.5rem;padding:1rem;min-height:120px;font-size:0.85rem;color:var(--soft)}
+.result-box.has-result{background:#fff}
+.result-hidden{display:none}
+
+/* Result cards */
+.r-badge{display:inline-flex;align-items:center;gap:0.4rem;padding:0.25rem 0.65rem;border-radius:2rem;font-size:0.72rem;font-weight:700;margin-bottom:0.75rem}
+.r-p1{background:#FEE2E2;color:#991B1B}
+.r-p2{background:#FEF3C7;color:#92400E}
+.r-p3{background:#D1FAE5;color:#065F46}
+.r-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--soft);margin-bottom:0.2rem;margin-top:0.75rem}
+.r-value{font-size:0.875rem;font-weight:600;color:var(--text)}
+.r-solution{font-size:0.82rem;color:var(--soft);line-height:1.6;margin-top:0.25rem}
+.ticket-num{background:var(--maroon-dark);color:var(--gold);font-size:0.72rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:0.25rem;font-family:monospace}
+
+/* Security & audit */
+.security-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.sec-card{background:var(--white);border:1px solid var(--mid);border-radius:0.75rem;padding:1.25rem}
+.sec-icon{font-size:1.5rem;margin-bottom:0.5rem}
+.sec-title{font-size:0.875rem;font-weight:700;color:var(--text);margin-bottom:0.3rem}
+.sec-desc{font-size:0.78rem;color:var(--soft);line-height:1.6}
+.sec-check{display:flex;align-items:flex-start;gap:0.5rem;font-size:0.78rem;color:var(--soft);margin-top:0.3rem}
+.sec-check::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0}
+
+/* Audit log */
+.audit-log{background:#0F172A;border-radius:0.75rem;padding:1.25rem;font-family:monospace;font-size:0.78rem;max-height:200px;overflow-y:auto}
+.log-line{color:#94A3B8;line-height:1.8}
+.log-ts{color:#475569}
+.log-info{color:#38BDF8}
+.log-warn{color:#FBBF24}
+.log-ok{color:#34D399}
+.log-sec{color:#A78BFA}
+
+/* Architecture */
+.arch-diagram{background:var(--white);border:1px solid var(--mid);border-radius:0.875rem;padding:2rem;overflow-x:auto}
+.arch-row{display:flex;align-items:center;justify-content:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.arch-node{background:var(--off);border:1px solid var(--mid);border-radius:0.5rem;padding:0.6rem 1rem;font-size:0.78rem;font-weight:600;color:var(--text);text-align:center;min-width:110px}
+.arch-node.user{background:var(--blue-bg);border-color:#93C5FD;color:var(--blue)}
+.arch-node.ai{background:var(--purple-bg);border-color:#C4B5FD;color:var(--purple)}
+.arch-node.sec{background:var(--amber-bg);border-color:#FCD34D;color:var(--amber)}
+.arch-node.db{background:var(--green-bg);border-color:#6EE7B7;color:var(--green)}
+.arch-node.ops{background:var(--light);border-color:var(--mid);color:var(--maroon)}
+.arch-arrow{color:var(--gold);font-size:1.1rem;font-weight:700}
+.arch-label{font-size:0.7rem;color:var(--soft);text-align:center;font-style:italic;margin-bottom:1.25rem}
+
+/* Deployment */
+.deploy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.deploy-card{background:var(--white);border:1px solid var(--mid);border-radius:0.75rem;padding:1.25rem}
+.deploy-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--soft);margin-bottom:0.3rem}
+.deploy-val{font-size:0.875rem;font-weight:600;color:var(--text)}
+.deploy-sub{font-size:0.75rem;color:var(--soft);margin-top:0.15rem}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:0.4rem;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+
+/* ORDER FORM */
+.order-form{display:grid;gap:0.75rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem}
+.form-group{}
+.form-label{font-size:0.75rem;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:0.4px;display:block;margin-bottom:0.3rem}
+
+/* Approval chain */
+.approval-chain{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;margin-top:0.75rem}
+.appr-step{display:flex;align-items:center;gap:0.4rem;padding:0.3rem 0.7rem;border-radius:2rem;font-size:0.72rem;font-weight:700}
+.appr-done{background:var(--green-bg);color:#065F46}
+.appr-current{background:var(--amber-bg);color:#92400E}
+.appr-pending{background:var(--light);color:var(--soft)}
+.appr-arrow{color:var(--mid)}
+
+/* Thinking animation */
+.thinking{display:flex;align-items:center;gap:0.5rem;color:var(--soft);font-size:0.82rem;padding:0.5rem 0}
+.thinking-dots{display:flex;gap:3px}
+.thinking-dot{width:6px;height:6px;border-radius:50%;background:var(--maroon);animation:bounce 1.2s infinite}
+.thinking-dot:nth-child(2){animation-delay:0.2s}
+.thinking-dot:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+footer{background:#2A0910;color:rgba(255,255,255,0.4);text-align:center;padding:2rem;font-size:0.82rem}
+footer a{color:var(--gold);text-decoration:none}
+
+@media(max-width:768px){
+  .demo-row{grid-template-columns:1fr}
+  .journey-step:not(:last-child)::after{display:none}
+  nav{padding:0 1.25rem}
+  section{padding:4rem 1.25rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <a href="cv_showcase.html" class="nav-back">← CV</a>
+    <span class="nav-brand">Søren Kim <span>Hansen</span></span>
+  </div>
+  <span class="nav-badge">AI Proof of Concept</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">
+      <div class="hero-line"></div>
+      <span class="hero-eyebrow-text">Fra Idé til Sikker Drift</span>
+      <div class="hero-line"></div>
+    </div>
+    <h1>AI-drevet <span>Service Management</span></h1>
+    <p class="hero-sub">Et proof of concept der viser to AI-støttede processer — IT Support og Bestilling — fra konceptidé over implementering til sikker, auditeret drift.</p>
+    <div class="tech-badges">
+      <span class="tech-badge">🤖 LLM Integration</span>
+      <span class="tech-badge">🔒 Input Validering</span>
+      <span class="tech-badge">📋 Audit Log</span>
+      <span class="tech-badge">🔄 Workflow Automation</span>
+      <span class="tech-badge">🐳 Docker</span>
+      <span class="tech-badge">📊 ITIL-inspireret</span>
+    </div>
+    <div class="hero-cta">
+      <a href="#demo" class="btn-primary">Prøv demoen</a>
+      <a href="#arkitektur" class="btn-outline">Se arkitektur</a>
+    </div>
+  </div>
+</div>
+
+<!-- JOURNEY -->
+<section style="background:var(--white)">
+  <div class="section-inner">
+    <div class="section-label">Metode</div>
+    <h2>Fra Idé til Sikker Drift</h2>
+    <p class="section-sub">Fire faser fra problemformulering til driftssat løsning.</p>
+    <div class="divider"></div>
+    <div class="journey">
+      <div class="journey-step">
+        <div class="journey-num">1</div>
+        <h4>Idé & Use Case</h4>
+        <p>Identificer processerne der kan automatiseres. Definer scope, brugere og succeskriterier med udgangspunkt i reelle brugerbehov.</p>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">2</div>
+        <h4>Design & Sikkerhed</h4>
+        <p>Arkitektur med sikkerhedslag fra start: input-validering, rollebaseret adgang, ingen PII i logs og auditeret datahåndtering.</p>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">3</div>
+        <h4>Implementering</h4>
+        <p>AI-integration via LLM API til klassificering og routing. Workflow-motor håndterer godkendelse og eskalering automatisk.</p>
+      </div>
+      <div class="journey-step">
+        <div class="journey-num">4</div>
+        <h4>Drift & Overvågning</h4>
+        <p>Containeriseret deployment via Docker. Audit log i realtid, health checks og nem opdatering uden nedetid.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section id="demo">
+  <div class="section-inner">
+    <div class="section-label">Interaktiv Demo</div>
+    <h2>Prøv det selv</h2>
+    <p class="section-sub">Begge scenarier er fuldt interaktive. AI-klassificeringen er simuleret lokalt — i produktion erstattes dette af et LLM API-kald.</p>
+    <div class="divider"></div>
+
+    <div class="demo-tabs">
+      <button class="demo-tab active" onclick="switchTab('support',this)">🎧 IT Support Bot</button>
+      <button class="demo-tab" onclick="switchTab('order',this)">📦 IT Bestilling</button>
+    </div>
+
+    <!-- SUPPORT PANEL -->
+    <div class="demo-panel active" id="panel-support">
+      <div class="demo-box">
+        <div class="demo-header">
+          <div class="demo-dots">
+            <div class="demo-dot" style="background:#ff5f56"></div>
+            <div class="demo-dot" style="background:#ffbd2e"></div>
+            <div class="demo-dot" style="background:#27c93f"></div>
+          </div>
+          <span class="demo-title">IT Support — AI Klassificering</span>
+        </div>
+        <div class="demo-body">
+          <div class="demo-row">
+            <div class="demo-col">
+              <h4>Beskriv dit problem</h4>
+              <textarea id="support-input" rows="5" placeholder="Eks: Min bærbare computer vil ikke starte, skærmen er sort og intet sker når jeg trykker på tænd/sluk-knappen..."></textarea>
+              <button class="demo-btn" onclick="runSupport()">🤖 Analysér med AI</button>
+            </div>
+            <div class="demo-col">
+              <h4>AI Respons</h4>
+              <div class="result-box" id="support-result">
+                <span style="color:var(--mid);font-style:italic">Resultatet vises her efter analyse...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER PANEL -->
+    <div class="demo-panel" id="panel-order">
+      <div class="demo-box">
+        <div class="demo-header">
+          <div class="demo-dots">
+            <div class="demo-dot" style="background:#ff5f56"></div>
+            <div class="demo-dot" style="background:#ffbd2e"></div>
+            <div class="demo-dot" style="background:#27c93f"></div>
+          </div>
+          <span class="demo-title">IT Bestilling — AI Validering & Godkendelsesflow</span>
+        </div>
+        <div class="demo-body">
+          <div class="demo-row">
+            <div class="demo-col">
+              <h4>Bestillingsformular</h4>
+              <div class="order-form">
+                <div class="form-group">
+                  <label class="form-label">Udstyr / Software</label>
+                  <select id="order-type">
+                    <option value="">Vælg kategori...</option>
+                    <option value="laptop">💻 Bærbar computer</option>
+                    <option value="monitor">🖥️ Skærm</option>
+                    <option value="software">📀 Softwarelicens</option>
+                    <option value="mobile">📱 Mobiltelefon</option>
+                    <option value="headset">🎧 Headset</option>
+                    <option value="server">🖥️ Server / Cloud ressource</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Koststed</label>
+                    <input type="text" id="order-cost" placeholder="Eks: IT-7042">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Forventet pris (DKK)</label>
+                    <input type="number" id="order-price" placeholder="0">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Forretningsmæssig begrundelse</label>
+                  <textarea id="order-reason" rows="3" placeholder="Beskriv behov og formål..."></textarea>
+                </div>
+                <button class="demo-btn" onclick="runOrder()">🤖 Send til AI Validering</button>
+              </div>
+            </div>
+            <div class="demo-col">
+              <h4>AI Validering & Godkendelsesflow</h4>
+              <div class="result-box" id="order-result">
+                <span style="color:var(--mid);font-style:italic">Udfyld formularen og send til validering...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="arkitektur" style="background:var(--white)">
+  <div class="section-inner">
+    <div class="section-label">Arkitektur</div>
+    <h2>Systemdesign</h2>
+    <p class="section-sub">Sikkerhed er ikke et lag ovenpå — det er integreret i hver komponent fra start.</p>
+    <div class="divider"></div>
+    <div class="arch-diagram">
+      <div class="arch-row">
+        <div class="arch-node user">👤 Bruger / Medarbejder</div>
+      </div>
+      <div class="arch-label">HTTPS · TLS 1.3</div>
+      <div class="arch-row">
+        <div class="arch-node sec">🔒 API Gateway<br><small>Rate limit · Auth · WAF</small></div>
+      </div>
+      <div class="arch-label">Token validation · Input sanitering</div>
+      <div class="arch-row">
+        <div class="arch-node ops">🔄 Workflow Engine<br><small>Routing · Eskalering</small></div>
+        <div class="arch-arrow">↔</div>
+        <div class="arch-node ai">🤖 LLM Service<br><small>Klassificering · Svar</small></div>
+      </div>
+      <div class="arch-label">Intern kommunikation · Ingen PII til AI</div>
+      <div class="arch-row">
+        <div class="arch-node db">📋 Ticket System<br><small>ITSM Integration</small></div>
+        <div class="arch-arrow">↔</div>
+        <div class="arch-node db">🗄️ Audit Log<br><small>Immutable · Encrypted</small></div>
+        <div class="arch-arrow">↔</div>
+        <div class="arch-node sec">📊 Monitoring<br><small>Alerting · Dashboards</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECURITY -->
+<section>
+  <div class="section-inner">
+    <div class="section-label">Sikkerhed</div>
+    <h2>Sikkerhedslag</h2>
+    <p class="section-sub">Seks kontroller der tilsammen giver forsvar i dybden — ingen enkelt fejl kan kompromittere systemet.</p>
+    <div class="divider"></div>
+    <div class="security-grid">
+      <div class="sec-card">
+        <div class="sec-icon">🛡️</div>
+        <div class="sec-title">Input Validering</div>
+        <div class="sec-desc">Al brugerinput saniteres og valideres før det når AI-laget.</div>
+        <div class="sec-check">Maks. inputlængde håndhæves</div>
+        <div class="sec-check">HTML/script-injektion blokeres</div>
+        <div class="sec-check">Prompt injection mitigeres</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">🔐</div>
+        <div class="sec-title">Autentificering</div>
+        <div class="sec-desc">Rollebaseret adgang styrer hvem der kan se og gøre hvad.</div>
+        <div class="sec-check">SSO via eksisterende IdP</div>
+        <div class="sec-check">Sessionstimeout efter inaktivitet</div>
+        <div class="sec-check">MFA for administrative funktioner</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">📋</div>
+        <div class="sec-title">Audit Log</div>
+        <div class="sec-desc">Alle handlinger logges uforskammet og med tidsstempel.</div>
+        <div class="sec-check">Immutable log — kan ikke slettes</div>
+        <div class="sec-check">Hvem, hvad, hvornår</div>
+        <div class="sec-check">Krypteret ved hvile og transport</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">🔒</div>
+        <div class="sec-title">Data Privacy</div>
+        <div class="sec-desc">Persondata håndteres efter principle of least privilege.</div>
+        <div class="sec-check">Ingen PII sendes til AI-tjenesten</div>
+        <div class="sec-check">Data minimeres ved logging</div>
+        <div class="sec-check">GDPR-kompatibelt sletteflow</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">⚡</div>
+        <div class="sec-title">Rate Limiting</div>
+        <div class="sec-desc">Beskytter mod misbrug og kontrollerer AI-udgifter.</div>
+        <div class="sec-check">Per bruger og per endpoint</div>
+        <div class="sec-check">Automatisk blokering ved anomali</div>
+        <div class="sec-check">Alert ved usædvanlig brug</div>
+      </div>
+      <div class="sec-card">
+        <div class="sec-icon">🔍</div>
+        <div class="sec-title">Overvågning</div>
+        <div class="sec-desc">Kontinuerlig sundhedsovervågning og alerts i realtid.</div>
+        <div class="sec-check">Health checks hvert 30 sek.</div>
+        <div class="sec-check">Alert ved fejlrate > 1%</div>
+        <div class="sec-check">Automatisk restart ved nedbrud</div>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem;font-weight:700;margin:2.5rem 0 1rem;color:var(--text)">Live Audit Log (simuleret)</h3>
+    <div class="audit-log" id="audit-log">
+      <div class="log-line"><span class="log-ts">2026-11-10 08:14:02</span> <span class="log-info">[INFO]</span> System startet · Container: cv-ai-poc · Version: 1.2.0</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 08:14:03</span> <span class="log-ok">[OK]</span> Health check bestået · DB forbundet · LLM API tilgængelig</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 09:01:14</span> <span class="log-info">[INFO]</span> Support-henvendelse modtaget · Session: usr_a7f2 · Input: 142 tegn</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 09:01:14</span> <span class="log-sec">[SEC]</span> Input valideret · Ingen injektion opdaget · PII: ingen</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 09:01:15</span> <span class="log-ok">[OK]</span> AI klassificering fuldført · Kategori: Hardware · Prioritet: P2 · Latency: 847ms</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 09:01:15</span> <span class="log-info">[INFO]</span> Ticket oprettet · INC-20261110-0047 · Tildelt: 1st-line-support</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 10:33:07</span> <span class="log-info">[INFO]</span> Bestilling modtaget · Type: laptop · Pris: 12.500 · Session: usr_b3c1</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 10:33:07</span> <span class="log-sec">[SEC]</span> Koststed valideret · Budgetgrænse kontrolleret · Godkendelsesniveau: Manager</div>
+      <div class="log-line"><span class="log-ts">2026-11-10 10:33:08</span> <span class="log-ok">[OK]</span> Bestilling sendt til godkendelse · Approver: line-manager · REQ-20261110-0012</div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPLOYMENT -->
+<section style="background:var(--white)">
+  <div class="section-inner">
+    <div class="section-label">Drift</div>
+    <h2>Deployment & Drift</h2>
+    <p class="section-sub">Containeriseret og klar til både lokal og cloud-deployment. Opdateringer sker uden nedetid.</p>
+    <div class="divider"></div>
+    <div class="deploy-grid">
+      <div class="deploy-card">
+        <div class="deploy-label">Status</div>
+        <div class="deploy-val"><span class="status-dot"></span>Kørende</div>
+        <div class="deploy-sub">Uptime: 99.98% (30 dage)</div>
+      </div>
+      <div class="deploy-card">
+        <div class="deploy-label">Container</div>
+        <div class="deploy-val">🐳 Docker Compose</div>
+        <div class="deploy-sub">nginx:alpine + python:3.12-slim</div>
+      </div>
+      <div class="deploy-card">
+        <div class="deploy-label">Infrastructure</div>
+        <div class="deploy-val">🏠 TrueNAS SCALE</div>
+        <div class="deploy-sub">Lokalt · Port 8082 · SMB backup</div>
+      </div>
+      <div class="deploy-card">
+        <div class="deploy-label">CI/CD</div>
+        <div class="deploy-val">📦 GitHub Actions</div>
+        <div class="deploy-sub">Auto-deploy ved push til main</div>
+      </div>
+      <div class="deploy-card">
+        <div class="deploy-label">AI Model</div>
+        <div class="deploy-val">🤖 Claude API</div>
+        <div class="deploy-sub">Fallback: lokal klassificering</div>
+      </div>
+      <div class="deploy-card">
+        <div class="deploy-label">Ekstern adgang</div>
+        <div class="deploy-val">🌐 GitHub Pages</div>
+        <div class="deploy-sub">vollerup.github.io/soren-kim-hansen</div>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem;background:#0F172A;border-radius:0.75rem;padding:1.25rem;font-family:monospace;font-size:0.78rem;overflow-x:auto">
+      <div style="color:#64748B;margin-bottom:0.5rem"># docker-compose.yml</div>
+      <div style="color:#94A3B8">services:</div>
+      <div style="color:#94A3B8">&nbsp;&nbsp;ai-poc:</div>
+      <div style="color:#38BDF8">&nbsp;&nbsp;&nbsp;&nbsp;image: python:3.12-slim</div>
+      <div style="color:#94A3B8">&nbsp;&nbsp;&nbsp;&nbsp;restart: unless-stopped</div>
+      <div style="color:#94A3B8">&nbsp;&nbsp;&nbsp;&nbsp;ports: ["8082:8000"]</div>
+      <div style="color:#34D399">&nbsp;&nbsp;&nbsp;&nbsp;environment:</div>
+      <div style="color:#34D399">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}</div>
+      <div style="color:#94A3B8">&nbsp;&nbsp;&nbsp;&nbsp;healthcheck:</div>
+      <div style="color:#94A3B8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test: ["CMD","curl","-f","http://localhost:8000/health"]</div>
+      <div style="color:#94A3B8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;interval: 30s</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Søren Kim Hansen · <a href="cv_showcase.html">← Tilbage til CV</a> · <a href="https://linkedin.com/in/soren-kim-hansen-year2026" target="_blank">LinkedIn</a></p>
+  <p style="margin-top:0.5rem;opacity:0.4">AI Proof of Concept · Fra Idé til Sikker Drift</p>
+</footer>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.demo-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── SUPPORT BOT ──
+function classifySupport(text) {
+  text = text.toLowerCase();
+  if (!text || text.trim().length < 5) return null;
+
+  if (/server|netv[æe]rk|vpn|internet|wifi|wi-fi|forbindels|router|switch|firewall/.test(text))
+    return {priority:'P1',badge:'r-p1',cat:'Netværk / Infrastruktur',team:'2nd Line — Netværk',
+      solution:'Kritisk netværksproblem identificeret. Eskaleres straks til netværksteamet. Tjek om andre brugere er påvirket (potentielt P1-major incident). Log ind på netværksovervågning og verificer switchstatus.',
+      eta:'< 15 min',ticket:'INC-'+ticketNum()};
+
+  if (/password|adgangskode|logge ind|login|account|konto|adgang|l[åa]st ude|l[åa]st ud/.test(text))
+    return {priority:'P2',badge:'r-p2',cat:'Adgangsstyring',team:'Service Desk',
+      solution:'Brug self-service password reset på intranettet (IT Portal → Reset Password). Hvis MFA-enheden er tabt, kontakt Service Desk direkte med billedlegitimation. Gennemsnitlig løsningstid: 10 minutter.',
+      eta:'< 2 timer',ticket:'INC-'+ticketNum()};
+
+  if (/printer|print|udskrift|scanner/.test(text))
+    return {priority:'P3',badge:'r-p3',cat:'Hardware — Printer',team:'1st Line Support',
+      solution:'1) Genstart printeren. 2) Tjek kabelforbindelser. 3) Fjern papirstop (åbn frontlåge). 4) Afinstallér og geninstallér printerdriver via IT Portal → Software. Løst i 80% af tilfælde ved trin 1-2.',
+      eta:'< 4 timer',ticket:'INC-'+ticketNum()};
+
+  if (/outlook|email|mail|kalender|teams|office|microsoft/.test(text))
+    return {priority:'P2',badge:'r-p2',cat:'Software — Microsoft 365',team:'1st Line Support',
+      solution:'1) Genstart applikationen. 2) Reparer Office via Kontrolpanel → Programmer. 3) Ryd Outlook-cache (Kør → %localappdata%\\Microsoft\\Outlook). Hvis problemet fortsætter, kør Office Online Repair.',
+      eta:'< 4 timer',ticket:'INC-'+ticketNum()};
+
+  if (/b[æe]rbar|laptop|computer|pc|sk[æe]rm|bl[åa] sk[æe]rm|crasher|fryser|genstart/.test(text))
+    return {priority:'P2',badge:'r-p2',cat:'Hardware — Computer',team:'1st Line Support',
+      solution:'1) Genstart computeren (hård genstart hvis nødvendigt). 2) Tjek om Windows er opdateret. 3) Kør Windows Memory Diagnostic (søg i Start-menuen). Blå skærm: noter fejlkoden og send til Service Desk.',
+      eta:'< 4 timer',ticket:'INC-'+ticketNum()};
+
+  if (/software|program|app|installér|install|licens/.test(text))
+    return {priority:'P3',badge:'r-p3',cat:'Software / Licens',team:'1st Line Support',
+      solution:'Softwareinstallation bestilles via IT Portal → Software Katalog. Godkendelse fra leder kan kræves for betalingssoftware. Behandlingstid: 1 arbejdsdag. Licensbehov vurderes automatisk.',
+      eta:'1 arbejdsdag',ticket:'REQ-'+ticketNum()};
+
+  return {priority:'P3',badge:'r-p3',cat:'Generel IT-henvendelse',team:'1st Line Support',
+    solution:'Din henvendelse er modtaget og kategoriseret som generel IT-support. En tekniker gennemgår din sag og vender tilbage inden for SLA-tidsrammen. Du modtager en bekræftelsesmail med ticketnummeret.',
+    eta:'1 arbejdsdag',ticket:'INC-'+ticketNum()};
+}
+
+function ticketNum() {
+  return '2026'+String(Math.floor(Math.random()*9000+1000));
+}
+
+function addAuditEntry(msg, type) {
+  const log = document.getElementById('audit-log');
+  const now = new Date();
+  const ts = now.toISOString().replace('T',' ').slice(0,19);
+  const colors = {info:'#38BDF8',ok:'#34D399',sec:'#A78BFA',warn:'#FBBF24'};
+  const labels = {info:'[INFO]',ok:'[OK]',sec:'[SEC]',warn:'[WARN]'};
+  const line = document.createElement('div');
+  line.className='log-line';
+  line.innerHTML=`<span class="log-ts">${ts}</span> <span style="color:${colors[type]}">${labels[type]}</span> ${msg}`;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+
+function runSupport() {
+  const input = document.getElementById('support-input').value.trim();
+  const result = document.getElementById('support-result');
+  if (!input) { result.innerHTML='<span style="color:var(--red)">Beskriv venligst dit problem.</span>'; return; }
+  if (input.length < 10) { result.innerHTML='<span style="color:var(--red)">Beskrivelsen er for kort — tilføj venligst flere detaljer.</span>'; return; }
+
+  result.innerHTML='<div class="thinking"><span>AI analyserer</span><div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div></div>';
+  addAuditEntry(`Support-henvendelse modtaget · Input: ${input.length} tegn · Session: usr_${Math.random().toString(36).slice(2,6)}`, 'info');
+  addAuditEntry('Input valideret · Ingen injektion opdaget · Maks. længde: OK', 'sec');
+
+  setTimeout(() => {
+    const r = classifySupport(input);
+    if (!r) { result.innerHTML='<span style="color:var(--red)">Kunne ikke klassificere. Kontakt Service Desk direkte.</span>'; return; }
+    addAuditEntry(`AI klassificering fuldført · ${r.cat} · ${r.priority} · Latency: ${Math.floor(Math.random()*500+600)}ms`, 'ok');
+    addAuditEntry(`Ticket oprettet · ${r.ticket} · Tildelt: ${r.team}`, 'info');
+    result.classList.add('has-result');
+    result.innerHTML=`
+      <span class="r-badge ${r.badge}">🔴 ${r.priority}</span>
+      <div class="r-label">Kategori</div><div class="r-value">${r.cat}</div>
+      <div class="r-label">Tildelt team</div><div class="r-value">${r.team}</div>
+      <div class="r-label">Forventet løsningstid</div><div class="r-value">${r.eta}</div>
+      <div class="r-label">Anbefalet handling</div><div class="r-solution">${r.solution}</div>
+      <div style="margin-top:0.75rem;display:flex;align-items:center;gap:0.5rem">
+        <span class="r-label" style="margin:0">Ticket:</span>
+        <span class="ticket-num">${r.ticket}</span>
+      </div>`;
+  }, 1200);
+}
+
+// ── ORDER PROCESS ──
+function runOrder() {
+  const type = document.getElementById('order-type').value;
+  const cost = document.getElementById('order-cost').value.trim();
+  const price = parseFloat(document.getElementById('order-price').value) || 0;
+  const reason = document.getElementById('order-reason').value.trim();
+  const result = document.getElementById('order-result');
+
+  if (!type) { result.innerHTML='<span style="color:var(--red)">Vælg venligst en kategori.</span>'; return; }
+  if (!cost) { result.innerHTML='<span style="color:var(--red)">Angiv koststed.</span>'; return; }
+  if (price <= 0) { result.innerHTML='<span style="color:var(--red)">Angiv forventet pris.</span>'; return; }
+  if (reason.length < 15) { result.innerHTML='<span style="color:var(--red)">Begrundelsen er for kort.</span>'; return; }
+
+  result.innerHTML='<div class="thinking"><span>AI validerer bestilling</span><div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div></div>';
+  addAuditEntry(`Bestilling modtaget · Type: ${type} · Pris: ${price.toLocaleString('da-DK')} DKK · Koststed: ${cost}`, 'info');
+  addAuditEntry('Inputvalidering bestået · Koststedsformat OK · Budgetloft kontrolleret', 'sec');
+
+  setTimeout(() => {
+    const names = {laptop:'Bærbar computer',monitor:'Skærm',software:'Softwarelicens',mobile:'Mobiltelefon',headset:'Headset',server:'Server / Cloud'};
+    let level, chain, risk, comment;
+    if (price <= 5000) {
+      level='Manager'; risk='Lav';
+      chain=['<span class="appr-step appr-done">✓ Anmodet</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-current">⏳ Leder</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-pending">IT Fulfilment</span>'];
+      comment='Standard IT-udstyr under budgetgrænsen. Godkendelse fra nærmeste leder er tilstrækkelig.';
+    } else if (price <= 25000) {
+      level='IT-direktør'; risk='Middel';
+      chain=['<span class="appr-step appr-done">✓ Anmodet</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-done">✓ Leder</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-current">⏳ IT-direktør</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-pending">IT Fulfilment</span>'];
+      comment='Beløbet kræver godkendelse fra IT-direktøren. Leder skal godkende først.';
+    } else {
+      level='CFO + IT-direktør'; risk='Høj';
+      chain=['<span class="appr-step appr-done">✓ Anmodet</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-current">⏳ Leder</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-pending">IT-direktør</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-pending">CFO</span>','<span class="appr-arrow">→</span>','<span class="appr-step appr-pending">Fulfilment</span>'];
+      comment='Større investering. Kræver komplet godkendelseskæde inkl. CFO. Budget Board møde kan kræves.';
+    }
+    const reqNum = 'REQ-'+ticketNum();
+    addAuditEntry(`AI validering: Risiko ${risk} · Godkendelsesniveau: ${level}`, 'sec');
+    addAuditEntry(`Bestilling sendt til godkendelse · ${reqNum} · Approver: ${level}`, 'ok');
+    result.classList.add('has-result');
+    result.innerHTML=`
+      <span class="r-badge r-p3" style="background:#EDE9FE;color:#6D28D9">✓ Valideret</span>
+      <div class="r-label">Produkt</div><div class="r-value">${names[type] || type}</div>
+      <div class="r-label">Pris</div><div class="r-value">${price.toLocaleString('da-DK')} DKK · Koststed: ${cost}</div>
+      <div class="r-label">Risikovurdering</div><div class="r-value">${risk}</div>
+      <div class="r-label">Påkrævet godkendelse</div><div class="r-value">${level}</div>
+      <div class="r-label">Godkendelseskæde</div>
+      <div class="approval-chain">${chain.join('')}</div>
+      <div class="r-label">AI Kommentar</div><div class="r-solution">${comment}</div>
+      <div style="margin-top:0.75rem;display:flex;align-items:center;gap:0.5rem">
+        <span class="r-label" style="margin:0">Reference:</span>
+        <span class="ticket-num">${reqNum}</span>
+      </div>`;
+  }, 1400);
+}
+</script>
+</body>
+</html>
