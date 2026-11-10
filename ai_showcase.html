@@ -27,6 +27,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(61,13,24,0.9
 .nav-brand{color:#fff;font-weight:700;font-size:0.95rem}
 .nav-brand span{color:var(--gold)}
 .nav-badge{background:rgba(200,169,110,0.15);border:1px solid rgba(200,169,110,0.3);color:var(--gold);font-size:0.72rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:2rem;letter-spacing:0.5px}
+.nav-lang{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);font-size:0.75rem;font-weight:600;padding:0.25rem 0.65rem;border-radius:2rem;text-decoration:none;transition:background 0.2s}
+.nav-lang:visited{color:rgba(255,255,255,0.8)}
+.nav-lang:hover{background:rgba(255,255,255,0.18)}
 
 /* HERO */
 .hero{background:var(--maroon-dark);min-height:85vh;display:flex;align-items:center;justify-content:center;padding:100px 2.5rem 60px;text-align:center}
@@ -177,7 +180,10 @@ footer a{color:var(--gold);text-decoration:none}
     <a href="cv_showcase.html" class="nav-back">← CV</a>
     <span class="nav-brand">Søren Kim <span>Hansen</span></span>
   </div>
-  <span class="nav-badge">AI Proof of Concept</span>
+  <div style="display:flex;align-items:center;gap:0.75rem">
+    <span class="nav-badge">AI Proof of Concept</span>
+    <a href="ai_showcase_en.html" class="nav-lang">🇬🇧 English</a>
+  </div>
 </nav>
 
 <!-- HERO -->
