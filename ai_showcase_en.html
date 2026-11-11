@@ -123,6 +123,12 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--maroon)}
 .appr-current{background:var(--amber-bg);color:#92400E}
 .appr-pending{background:var(--light);color:var(--soft)}
 .appr-arrow{color:var(--mid)}
+.specs-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--gold);margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid var(--mid);display:block}
+.specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem}
+.price-estimate{background:var(--maroon-dark);border-radius:0.5rem;padding:0.75rem 1rem;margin-top:0.75rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
+.price-estimate-num{font-size:1.1rem;font-weight:800;color:var(--gold)}
+.price-estimate-label{font-size:0.72rem;color:rgba(255,255,255,0.5)}
+.price-estimate-note{font-size:0.7rem;color:rgba(255,255,255,0.4)}
 .thinking{display:flex;align-items:center;gap:0.5rem;color:var(--soft);font-size:0.82rem;padding:0.5rem 0}
 .thinking-dots{display:flex;gap:3px}
 .thinking-dot{width:6px;height:6px;border-radius:50%;background:var(--maroon);animation:bounce 1.2s infinite}
@@ -269,7 +275,7 @@ footer a{color:var(--gold);text-decoration:none}
               <div class="order-form">
                 <div class="form-group">
                   <label class="form-label">Equipment / Software</label>
-                  <select id="order-type">
+                  <select id="order-type" onchange="showProductSpecs(this.value)">
                     <option value="">Select category...</option>
                     <option value="laptop">💻 Laptop</option>
                     <option value="monitor">🖥️ Monitor</option>
@@ -279,6 +285,7 @@ footer a{color:var(--gold);text-decoration:none}
                     <option value="server">🖥️ Server / Cloud resource</option>
                   </select>
                 </div>
+                <div id="product-specs" style="display:none;border-top:1px solid var(--mid);padding-top:0.75rem;margin-top:0.25rem"></div>
                 <div class="form-row">
                   <div class="form-group">
                     <label class="form-label">Cost centre</label>
@@ -484,6 +491,145 @@ function switchTab(id, btn) {
   btn.classList.add('active');
 }
 
+// ── PRODUCT SPECS & PRICING ──
+const SPEC_DEFS = {
+  laptop:[
+    {id:'spec-screen',label:'Screen size',opts:['13"','14"','15.6"','16"','17"']},
+    {id:'spec-ram',label:'RAM',opts:['8 GB','16 GB','32 GB','64 GB']},
+    {id:'spec-storage',label:'Storage',opts:['256 GB SSD','512 GB SSD','1 TB SSD','2 TB SSD']},
+    {id:'spec-cpu',label:'Processor',opts:['Intel Core i5','Intel Core i7','Intel Core i9','AMD Ryzen 5','AMD Ryzen 7','Apple M4']},
+    {id:'spec-os',label:'Operating system',opts:['Windows 11 Pro','macOS','Linux']},
+  ],
+  monitor:[
+    {id:'spec-screen',label:'Screen size',opts:['24"','27"','32"','34" Ultrawide','49" Ultrawide']},
+    {id:'spec-res',label:'Resolution',opts:['Full HD (1080p)','QHD (1440p)','4K UHD','5K']},
+    {id:'spec-panel',label:'Panel type',opts:['IPS','VA','OLED','TN']},
+    {id:'spec-hz',label:'Refresh rate',opts:['60 Hz','75 Hz','144 Hz','165 Hz','240 Hz']},
+  ],
+  software:[
+    {id:'spec-name',label:'Software name',type:'text',placeholder:'E.g. Adobe Acrobat'},
+    {id:'spec-users',label:'Licence type',opts:['Single user','Team (5 users)','Department (25 users)','Enterprise']},
+    {id:'spec-sub',label:'Subscription',opts:['Monthly','Annual','Perpetual']},
+    {id:'spec-deploy',label:'Deployment',opts:['Cloud / SaaS','On-premises','Hybrid']},
+  ],
+  mobile:[
+    {id:'spec-brand',label:'Brand',opts:['Apple iPhone','Samsung Galaxy','Google Pixel','Sony Xperia','Other']},
+    {id:'spec-storage',label:'Storage',opts:['64 GB','128 GB','256 GB','512 GB']},
+    {id:'spec-sim',label:'SIM',opts:['Single SIM','Dual SIM / eSIM']},
+    {id:'spec-plan',label:'Plan',opts:['New corporate plan','Existing plan','BYOD']},
+  ],
+  headset:[
+    {id:'spec-type',label:'Type',opts:['Wired (USB)','Wired (3.5mm)','Wireless (Bluetooth)','Wireless (DECT)']},
+    {id:'spec-anc',label:'Noise cancellation',opts:['Active (ANC)','Passive','None']},
+    {id:'spec-conn',label:'Connectivity',opts:['USB-A','USB-C','3.5mm jack','Bluetooth 5.x']},
+    {id:'spec-cert',label:'Certification',opts:['Microsoft Teams','Zoom','UC compatible','General']},
+  ],
+  server:[
+    {id:'spec-stype',label:'Server type',opts:['Physical server','Virtual machine (VM)','Cloud instance','NAS / Storage']},
+    {id:'spec-cpu',label:'CPU cores',opts:['2 cores','4 cores','8 cores','16 cores','32 cores']},
+    {id:'spec-ram',label:'RAM',opts:['8 GB','16 GB','32 GB','64 GB','128 GB','256 GB']},
+    {id:'spec-storage',label:'Storage',opts:['100 GB','500 GB','1 TB','5 TB','10 TB']},
+    {id:'spec-cloud',label:'Platform',opts:['On-premises','Microsoft Azure','AWS','Google Cloud']},
+  ],
+};
+
+const PRICES = {
+  laptop:{ base:5500,
+    'spec-screen':{'13"':0,'14"':500,'15.6"':800,'16"':1200,'17"':1800},
+    'spec-ram':{'8 GB':0,'16 GB':900,'32 GB':2200,'64 GB':4500},
+    'spec-storage':{'256 GB SSD':0,'512 GB SSD':400,'1 TB SSD':800,'2 TB SSD':1600},
+    'spec-cpu':{'Intel Core i5':0,'Intel Core i7':1800,'Intel Core i9':4500,'AMD Ryzen 5':0,'AMD Ryzen 7':1800,'Apple M4':2500},
+    'spec-os':{'Windows 11 Pro':800,'macOS':0,'Linux':0},
+  },
+  monitor:{ base:1800,
+    'spec-screen':{'24"':0,'27"':600,'32"':1200,'34" Ultrawide':2500,'49" Ultrawide':5500},
+    'spec-res':{'Full HD (1080p)':0,'QHD (1440p)':400,'4K UHD':1200,'5K':2800},
+    'spec-panel':{'IPS':400,'VA':0,'OLED':3500,'TN':0},
+    'spec-hz':{'60 Hz':0,'75 Hz':150,'144 Hz':700,'165 Hz':900,'240 Hz':1800},
+  },
+  software:{ base:0,
+    'spec-users':{'Single user':800,'Team (5 users)':3200,'Department (25 users)':9500,'Enterprise':28000},
+    'spec-sub':{'Monthly':600,'Annual':0,'Perpetual':8000},
+    'spec-deploy':{'Cloud / SaaS':0,'On-premises':2000,'Hybrid':3000},
+  },
+  mobile:{ base:0,
+    'spec-brand':{'Apple iPhone':8500,'Samsung Galaxy':5500,'Google Pixel':5000,'Sony Xperia':4500,'Other':2500},
+    'spec-storage':{'64 GB':0,'128 GB':400,'256 GB':800,'512 GB':1600},
+    'spec-sim':{'Single SIM':0,'Dual SIM / eSIM':200},
+    'spec-plan':{'New corporate plan':1200,'Existing plan':0,'BYOD':-500},
+  },
+  headset:{ base:300,
+    'spec-type':{'Wired (USB)':0,'Wired (3.5mm)':0,'Wireless (Bluetooth)':800,'Wireless (DECT)':1800},
+    'spec-anc':{'Active (ANC)':1200,'Passive':150,'None':0},
+    'spec-conn':{'USB-A':0,'USB-C':0,'3.5mm jack':0,'Bluetooth 5.x':0},
+    'spec-cert':{'Microsoft Teams':400,'Zoom':400,'UC compatible':250,'General':0},
+  },
+  server:{ base:0,
+    'spec-stype':{'Physical server':35000,'Virtual machine (VM)':8000,'Cloud instance':3500,'NAS / Storage':12000},
+    'spec-cpu':{'2 cores':0,'4 cores':2000,'8 cores':5000,'16 cores':10000,'32 cores':20000},
+    'spec-ram':{'8 GB':0,'16 GB':1000,'32 GB':2000,'64 GB':4000,'128 GB':8000,'256 GB':16000},
+    'spec-storage':{'100 GB':0,'500 GB':500,'1 TB':1000,'5 TB':3000,'10 TB':6000},
+    'spec-cloud':{'On-premises':0,'Microsoft Azure':5000,'AWS':5000,'Google Cloud':4500},
+  },
+};
+
+function calcPrice(type) {
+  const map = PRICES[type];
+  if (!map) return null;
+  let total = map.base || 0;
+  Object.keys(map).filter(k => k!=='base').forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value && map[id][el.value] !== undefined) total += map[id][el.value];
+  });
+  return total;
+}
+
+function updatePriceEstimate(type) {
+  const total = calcPrice(type);
+  const el = document.getElementById('price-estimate-display');
+  if (!el || total === null) return;
+  el.innerHTML = `<div><div class="price-estimate-label">Estimated price (excl. VAT)</div><div class="price-estimate-num">${total.toLocaleString('da-DK')} DKK</div></div><span class="price-estimate-note">Indicative market price</span>`;
+  const priceInput = document.getElementById('order-price');
+  if (priceInput) { priceInput.value = total; priceInput.dataset.auto='1'; }
+}
+
+function showProductSpecs(type) {
+  const specs = document.getElementById('product-specs');
+  if (!type) { specs.style.display='none'; specs.innerHTML=''; return; }
+  const fields = SPEC_DEFS[type];
+  if (!fields) { specs.style.display='none'; specs.innerHTML=''; return; }
+  let html = '<span class="specs-label">📋 Product Specifications</span><div class="specs-grid">';
+  fields.forEach(f => {
+    html += `<div class="form-group"><label class="form-label">${f.label}</label>`;
+    if (f.type==='text') {
+      html += `<input type="text" id="${f.id}" placeholder="${f.placeholder||''}">`;
+    } else {
+      html += `<select id="${f.id}"><option value="">Select...</option>`;
+      f.opts.forEach(o => html += `<option>${o}</option>`);
+      html += '</select>';
+    }
+    html += '</div>';
+  });
+  html += `</div><div id="price-estimate-display" class="price-estimate"><span class="price-estimate-note">Select specifications to see price estimate</span></div>`;
+  specs.style.display='block';
+  specs.innerHTML=html;
+  specs.querySelectorAll('select,input').forEach(el => el.addEventListener('change', () => updatePriceEstimate(type)));
+  specs.querySelectorAll('input[type=text]').forEach(el => el.addEventListener('input', () => updatePriceEstimate(type)));
+  updatePriceEstimate(type);
+}
+
+function collectSpecs() {
+  const fields = document.querySelectorAll('#product-specs select, #product-specs input');
+  const out = [];
+  fields.forEach(f => {
+    if (f.value && f.closest('.form-group')) {
+      const lbl = f.closest('.form-group').querySelector('.form-label');
+      if (lbl) out.push(`${lbl.textContent}: ${f.value}`);
+    }
+  });
+  return out;
+}
+
 function classifySupport(text) {
   text = text.toLowerCase();
   if (!text || text.trim().length < 5) return null;
@@ -581,6 +727,7 @@ function runOrder() {
   if (price <= 0) { result.innerHTML='<span style="color:var(--red)">Please enter the expected price.</span>'; return; }
   if (reason.length < 15) { result.innerHTML='<span style="color:var(--red)">Justification is too short.</span>'; return; }
 
+  const specs = collectSpecs();
   result.innerHTML='<div class="thinking"><span>AI is validating order</span><div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div></div>';
   addAuditEntry(`Order received · Type: ${type} · Price: ${price.toLocaleString('en-DK')} DKK · Cost centre: ${cost}`, 'info');
   addAuditEntry('Input validation passed · Cost centre format OK · Budget threshold checked', 'sec');
@@ -613,6 +760,7 @@ function runOrder() {
       <div class="r-label">Approval required from</div><div class="r-value">${level}</div>
       <div class="r-label">Approval chain</div>
       <div class="approval-chain">${chain.join('')}</div>
+      ${specs.length>0?`<div class="r-label">Specifications</div><div class="r-solution">${specs.join(' · ')}</div>`:''}
       <div class="r-label">AI Comment</div><div class="r-solution">${comment}</div>
       <div style="margin-top:0.75rem;display:flex;align-items:center;gap:0.5rem">
         <span class="r-label" style="margin:0">Reference:</span>
