@@ -260,6 +260,7 @@ footer a{color:var(--gold);text-decoration:none}
     <div class="demo-tabs">
       <button class="demo-tab active" onclick="switchTab('support',this)">🎧 IT Support Bot</button>
       <button class="demo-tab" onclick="switchTab('order',this)">📦 IT Bestilling</button>
+      <button class="demo-tab" onclick="switchTab('shadow',this)">🕵️ Skygge AI Radar</button>
     </div>
 
     <!-- SUPPORT PANEL -->
@@ -341,6 +342,90 @@ footer a{color:var(--gold);text-decoration:none}
               <h4>AI Validering & Godkendelsesflow</h4>
               <div class="result-box" id="order-result">
                 <span style="color:var(--mid);font-style:italic">Udfyld formularen og send til validering...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHADOW AI PANEL -->
+    <div class="demo-panel" id="panel-shadow">
+      <div class="demo-box">
+        <div class="demo-header">
+          <div class="demo-dots">
+            <div class="demo-dot" style="background:#ff5f56"></div>
+            <div class="demo-dot" style="background:#ffbd2e"></div>
+            <div class="demo-dot" style="background:#27c93f"></div>
+          </div>
+          <span class="demo-title">Skygge AI Radar — Survey-baseret BI Dashboard</span>
+        </div>
+        <div class="demo-body">
+          <div class="demo-row">
+            <div class="demo-col">
+              <h4>Simulér medarbejdersurvey</h4>
+              <p style="font-size:0.8rem;color:var(--soft);margin-bottom:1rem">Udfyld én svarperson nedenfor og tilføj til datasættet — eller brug de 20 forudindlæste svar og generer rapporten direkte.</p>
+              <div class="order-form">
+                <div class="form-group">
+                  <label class="form-label">Afdeling</label>
+                  <select id="sh-dept">
+                    <option value="">Vælg...</option>
+                    <option>IT</option><option>HR</option><option>Finance</option><option>Salg</option><option>Operations</option><option>Ledelse</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Bruger du AI-værktøjer i hverdagen?</label>
+                  <select id="sh-use">
+                    <option value="">Vælg...</option>
+                    <option value="daily">Ja, dagligt</option>
+                    <option value="weekly">Ja, ugentligt</option>
+                    <option value="rarely">Sjældent</option>
+                    <option value="no">Nej</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Hvilke AI-værktøjer? (vælg primære)</label>
+                  <select id="sh-tool">
+                    <option value="">Vælg...</option>
+                    <option>ChatGPT (privat konto)</option>
+                    <option>ChatGPT (virksomhedskonto)</option>
+                    <option>Microsoft Copilot (godkendt)</option>
+                    <option>Google Gemini</option>
+                    <option>Claude (Anthropic)</option>
+                    <option>Midjourney / DALL-E</option>
+                    <option>Andet / ved ikke</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Hvad deler du med AI-værktøjet?</label>
+                  <select id="sh-data">
+                    <option value="">Vælg...</option>
+                    <option value="public">Kun offentlige / neutrale data</option>
+                    <option value="internal">Interne dokumenter / emails</option>
+                    <option value="pii">Kunde- / persondata (PII)</option>
+                    <option value="confidential">Fortrolig virksomhedsinfo</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Er dit AI-brug godkendt af IT?</label>
+                  <select id="sh-approved">
+                    <option value="">Vælg...</option>
+                    <option value="yes">Ja, fuldt godkendt</option>
+                    <option value="partial">Delvist — jeg er usikker</option>
+                    <option value="no">Nej / ikke spurgt</option>
+                  </select>
+                </div>
+                <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+                  <button class="demo-btn" style="flex:1" onclick="addSurveyResponse()">➕ Tilføj svar</button>
+                  <button class="demo-btn" style="flex:1;background:var(--maroon-dark)" onclick="runShadowAI()">📊 Generer BI Rapport</button>
+                </div>
+                <div id="sh-count" style="font-size:0.78rem;color:var(--soft);margin-top:0.5rem;text-align:center">20 forudindlæste svar klar</div>
+              </div>
+            </div>
+            <div class="demo-col">
+              <h4>BI Dashboard — Skygge AI Risikoprofil</h4>
+              <div class="result-box" id="shadow-result" style="min-height:420px">
+                <span style="color:var(--mid);font-style:italic">Klik "Generer BI Rapport" for at se analysen...</span>
               </div>
             </div>
           </div>
@@ -609,6 +694,128 @@ function runSupport() {
         <span class="ticket-num">${r.ticket}</span>
       </div>`;
   }, 1200);
+}
+
+// ── SHADOW AI RADAR ──
+const SHADOW_BASE = [
+  {dept:'HR',use:'daily',tool:'ChatGPT (privat konto)',data:'internal',approved:'no'},
+  {dept:'HR',use:'daily',tool:'ChatGPT (privat konto)',data:'pii',approved:'no'},
+  {dept:'HR',use:'weekly',tool:'ChatGPT (privat konto)',data:'confidential',approved:'partial'},
+  {dept:'HR',use:'daily',tool:'Google Gemini',data:'internal',approved:'no'},
+  {dept:'HR',use:'weekly',tool:'Claude (Anthropic)',data:'public',approved:'partial'},
+  {dept:'Finance',use:'daily',tool:'ChatGPT (privat konto)',data:'confidential',approved:'no'},
+  {dept:'Finance',use:'daily',tool:'ChatGPT (privat konto)',data:'pii',approved:'no'},
+  {dept:'Finance',use:'weekly',tool:'Google Gemini',data:'internal',approved:'partial'},
+  {dept:'Finance',use:'rarely',tool:'Microsoft Copilot (godkendt)',data:'internal',approved:'yes'},
+  {dept:'Salg',use:'daily',tool:'ChatGPT (privat konto)',data:'internal',approved:'no'},
+  {dept:'Salg',use:'daily',tool:'Midjourney / DALL-E',data:'public',approved:'no'},
+  {dept:'Salg',use:'weekly',tool:'ChatGPT (privat konto)',data:'confidential',approved:'no'},
+  {dept:'Salg',use:'rarely',tool:'Claude (Anthropic)',data:'public',approved:'partial'},
+  {dept:'Operations',use:'weekly',tool:'ChatGPT (privat konto)',data:'internal',approved:'partial'},
+  {dept:'Operations',use:'rarely',tool:'Microsoft Copilot (godkendt)',data:'internal',approved:'yes'},
+  {dept:'Operations',use:'daily',tool:'Google Gemini',data:'internal',approved:'no'},
+  {dept:'IT',use:'daily',tool:'Microsoft Copilot (godkendt)',data:'internal',approved:'yes'},
+  {dept:'IT',use:'daily',tool:'Claude (Anthropic)',data:'public',approved:'yes'},
+  {dept:'IT',use:'weekly',tool:'ChatGPT (virksomhedskonto)',data:'internal',approved:'yes'},
+  {dept:'Ledelse',use:'weekly',tool:'ChatGPT (privat konto)',data:'confidential',approved:'no'},
+];
+let shadowData = [...SHADOW_BASE];
+
+function addSurveyResponse() {
+  const dept = document.getElementById('sh-dept').value;
+  const use  = document.getElementById('sh-use').value;
+  const tool = document.getElementById('sh-tool').value;
+  const data = document.getElementById('sh-data').value;
+  const approved = document.getElementById('sh-approved').value;
+  if (!dept||!use||!tool||!data||!approved) {
+    document.getElementById('sh-count').style.color='var(--red)';
+    document.getElementById('sh-count').textContent='Udfyld alle felter for at tilføje svar.';
+    return;
+  }
+  shadowData.push({dept,use,tool,data,approved});
+  document.getElementById('sh-count').style.color='var(--green)';
+  document.getElementById('sh-count').textContent=`✓ ${shadowData.length} svar i datasættet`;
+  addAuditEntry(`Survey-svar tilføjet · Afdeling: ${dept} · Risiko vurderes ved rapport-generering`, 'info');
+}
+
+function runShadowAI() {
+  const res = document.getElementById('shadow-result');
+  res.innerHTML='<div class="thinking"><span>AI analyserer survey</span><div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div></div>';
+  addAuditEntry(`Skygge AI analyse startet · ${shadowData.length} survey-svar · Kilde: Teams-survey`, 'info');
+  setTimeout(() => {
+    // Compute stats
+    const total = shadowData.length;
+    const shadow = shadowData.filter(r=>r.approved==='no'||r.approved==='partial');
+    const highRisk = shadowData.filter(r=>(r.data==='pii'||r.data==='confidential')&&r.approved!=='yes');
+    const active = shadowData.filter(r=>r.use==='daily'||r.use==='weekly');
+    const shadowPct = Math.round(shadow.length/total*100);
+    const riskPct = Math.round(highRisk.length/total*100);
+
+    // By dept
+    const depts = [...new Set(shadowData.map(r=>r.dept))];
+    const deptStats = depts.map(d=>{
+      const rows = shadowData.filter(r=>r.dept===d);
+      const sh = rows.filter(r=>r.approved!=='yes');
+      return {d, pct:Math.round(sh.length/rows.length*100), n:rows.length};
+    }).sort((a,b)=>b.pct-a.pct);
+
+    // Tools
+    const toolMap = {};
+    shadowData.filter(r=>r.approved!=='yes').forEach(r=>{ toolMap[r.tool]=(toolMap[r.tool]||0)+1; });
+    const tools = Object.entries(toolMap).sort((a,b)=>b[1]-a[1]);
+    const toolMax = tools[0]?.[1]||1;
+
+    // Risk level
+    const riskLevel = riskPct>=30?'HØJ':riskPct>=15?'MEDIUM':'LAV';
+    const riskColor = riskPct>=30?'var(--red)':riskPct>=15?'var(--amber)':'var(--green)';
+
+    addAuditEntry(`Analyse fuldført · Skygge AI adoption: ${shadowPct}% · Høj-risiko eksponering: ${riskPct}%`, 'ok');
+    addAuditEntry(`Compliance-flag rejst · ${highRisk.length} svar med PII/fortrolig data og ugodkendt AI`, 'warn');
+
+    res.classList.add('has-result');
+    res.innerHTML = `
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;margin-bottom:1rem">
+  <div style="background:var(--red-bg);border:1px solid var(--red);border-radius:0.5rem;padding:0.6rem 0.75rem;text-align:center">
+    <div style="font-size:1.6rem;font-weight:800;color:var(--red)">${shadowPct}%</div>
+    <div style="font-size:0.72rem;color:var(--red);font-weight:600">Skygge AI-brug</div>
+  </div>
+  <div style="background:${riskPct>=30?'var(--red-bg)':riskPct>=15?'var(--amber-bg)':'var(--green-bg)'};border:1px solid ${riskColor};border-radius:0.5rem;padding:0.6rem 0.75rem;text-align:center">
+    <div style="font-size:1.6rem;font-weight:800;color:${riskColor}">${riskLevel}</div>
+    <div style="font-size:0.72rem;color:${riskColor};font-weight:600">Risikoniveau</div>
+  </div>
+  <div style="background:var(--amber-bg);border:1px solid var(--amber);border-radius:0.5rem;padding:0.6rem 0.75rem;text-align:center">
+    <div style="font-size:1.6rem;font-weight:800;color:var(--amber)">${highRisk.length}</div>
+    <div style="font-size:0.72rem;color:var(--amber);font-weight:600">Høj-risiko svar</div>
+  </div>
+</div>
+
+<div style="font-size:0.78rem;font-weight:700;color:var(--text);margin-bottom:0.4rem">📊 Skygge AI pr. afdeling</div>
+${deptStats.map(({d,pct,n})=>{
+  const col = pct>=70?'var(--red)':pct>=40?'var(--amber)':'var(--green)';
+  return `<div style="margin-bottom:0.35rem">
+  <div style="display:flex;justify-content:space-between;font-size:0.76rem;margin-bottom:2px"><span>${d}</span><span style="color:${col};font-weight:700">${pct}% <span style="color:var(--soft);font-weight:400">(${n} svar)</span></span></div>
+  <div style="background:var(--mid);border-radius:3px;height:8px"><div style="background:${col};width:${pct}%;height:8px;border-radius:3px;transition:width 0.6s"></div></div>
+</div>`;}).join('')}
+
+<div style="font-size:0.78rem;font-weight:700;color:var(--text);margin:0.75rem 0 0.4rem">🛠️ Ugodkendte AI-værktøjer i brug</div>
+${tools.slice(0,5).map(([t,c])=>`<div style="margin-bottom:0.3rem">
+  <div style="display:flex;justify-content:space-between;font-size:0.74rem;margin-bottom:2px"><span>${t}</span><span style="font-weight:700">${c}</span></div>
+  <div style="background:var(--mid);border-radius:3px;height:6px"><div style="background:var(--maroon);width:${Math.round(c/toolMax*100)}%;height:6px;border-radius:3px"></div></div>
+</div>`).join('')}
+
+<div style="background:var(--red-bg);border-left:3px solid var(--red);padding:0.6rem 0.75rem;border-radius:0 0.4rem 0.4rem 0;margin-top:0.75rem;font-size:0.78rem">
+  <div style="font-weight:700;color:var(--red);margin-bottom:0.3rem">⚠️ Compliance-flag</div>
+  <div style="color:var(--text)">${highRisk.length} medarbejdere deler PII eller fortrolig data med ugodkendte AI-tjenester — potentiel GDPR-eksponering.</div>
+</div>
+
+<div style="font-size:0.78rem;font-weight:700;color:var(--text);margin:0.75rem 0 0.3rem">✅ Anbefalinger</div>
+<div style="font-size:0.76rem;color:var(--soft);line-height:1.7">
+1. Implementér godkendt AI-platform (Copilot/Azure OpenAI) som erstatning for private konti<br>
+2. Klar AI-politik med whiteliste over godkendte værktøjer — kommunikér til alle afdelinger<br>
+3. DLP-regler der blokerer upload af PII/fortrolig data til ikke-godkendte AI-tjenester<br>
+4. Kvartalsvise surveys for løbende risikooverblik og adfærdsmåling
+</div>`;
+  }, 1500);
 }
 
 // ── PRODUCT SPECS & PRICING ──
