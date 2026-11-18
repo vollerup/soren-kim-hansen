@@ -226,6 +226,7 @@ footer a{color:var(--gold);text-decoration:none}
     <div class="demo-tabs">
       <button class="demo-tab active" onclick="switchTab('support',this)">🎧 IT Support Bot</button>
       <button class="demo-tab" onclick="switchTab('order',this)">📦 IT Ordering</button>
+      <button class="demo-tab" onclick="switchTab('shadow',this)">🕵️ Shadow AI Radar</button>
     </div>
 
     <!-- SUPPORT PANEL -->
@@ -307,6 +308,90 @@ footer a{color:var(--gold);text-decoration:none}
               <h4>AI Validation & Approval Flow</h4>
               <div class="result-box" id="order-result">
                 <span style="color:var(--mid);font-style:italic">Fill in the form and submit for validation...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHADOW AI PANEL -->
+    <div class="demo-panel" id="panel-shadow">
+      <div class="demo-box">
+        <div class="demo-header">
+          <div class="demo-dots">
+            <div class="demo-dot" style="background:#ff5f56"></div>
+            <div class="demo-dot" style="background:#ffbd2e"></div>
+            <div class="demo-dot" style="background:#27c93f"></div>
+          </div>
+          <span class="demo-title">Shadow AI Radar — Survey-based BI Dashboard</span>
+        </div>
+        <div class="demo-body">
+          <div class="demo-row">
+            <div class="demo-col">
+              <h4>Simulate an employee survey</h4>
+              <p style="font-size:0.8rem;color:var(--soft);margin-bottom:1rem">Fill in one respondent below and add to the dataset — or use the 20 pre-loaded responses and generate the report directly.</p>
+              <div class="order-form">
+                <div class="form-group">
+                  <label class="form-label">Department</label>
+                  <select id="sh-dept">
+                    <option value="">Select...</option>
+                    <option>IT</option><option>HR</option><option>Finance</option><option>Sales</option><option>Operations</option><option>Management</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Do you use AI tools in your daily work?</label>
+                  <select id="sh-use">
+                    <option value="">Select...</option>
+                    <option value="daily">Yes, daily</option>
+                    <option value="weekly">Yes, weekly</option>
+                    <option value="rarely">Rarely</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Which AI tools? (select primary)</label>
+                  <select id="sh-tool">
+                    <option value="">Select...</option>
+                    <option>ChatGPT (personal account)</option>
+                    <option>ChatGPT (enterprise account)</option>
+                    <option>Microsoft Copilot (approved)</option>
+                    <option>Google Gemini</option>
+                    <option>Claude (Anthropic)</option>
+                    <option>Midjourney / DALL-E</option>
+                    <option>Other / unsure</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">What do you share with the AI tool?</label>
+                  <select id="sh-data">
+                    <option value="">Select...</option>
+                    <option value="public">Public / neutral data only</option>
+                    <option value="internal">Internal documents / emails</option>
+                    <option value="pii">Customer / personal data (PII)</option>
+                    <option value="confidential">Confidential business information</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Is your AI use approved by IT?</label>
+                  <select id="sh-approved">
+                    <option value="">Select...</option>
+                    <option value="yes">Yes, fully approved</option>
+                    <option value="partial">Partially — I'm not sure</option>
+                    <option value="no">No / haven't asked</option>
+                  </select>
+                </div>
+                <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+                  <button class="demo-btn" style="flex:1" onclick="addSurveyResponse()">➕ Add response</button>
+                  <button class="demo-btn" style="flex:1;background:var(--maroon-dark)" onclick="runShadowAI()">📊 Generate BI Report</button>
+                </div>
+                <div id="sh-count" style="font-size:0.78rem;color:var(--soft);margin-top:0.5rem;text-align:center">20 pre-loaded responses ready</div>
+              </div>
+            </div>
+            <div class="demo-col">
+              <h4>BI Dashboard — Shadow AI Risk Profile</h4>
+              <div class="result-box" id="shadow-result" style="min-height:420px">
+                <span style="color:var(--mid);font-style:italic">Click "Generate BI Report" to see the analysis...</span>
               </div>
             </div>
           </div>
@@ -489,6 +574,123 @@ function switchTab(id, btn) {
   document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
   btn.classList.add('active');
+}
+
+// ── SHADOW AI RADAR ──
+const SHADOW_BASE = [
+  {dept:'HR',use:'daily',tool:'ChatGPT (personal account)',data:'internal',approved:'no'},
+  {dept:'HR',use:'daily',tool:'ChatGPT (personal account)',data:'pii',approved:'no'},
+  {dept:'HR',use:'weekly',tool:'ChatGPT (personal account)',data:'confidential',approved:'partial'},
+  {dept:'HR',use:'daily',tool:'Google Gemini',data:'internal',approved:'no'},
+  {dept:'HR',use:'weekly',tool:'Claude (Anthropic)',data:'public',approved:'partial'},
+  {dept:'Finance',use:'daily',tool:'ChatGPT (personal account)',data:'confidential',approved:'no'},
+  {dept:'Finance',use:'daily',tool:'ChatGPT (personal account)',data:'pii',approved:'no'},
+  {dept:'Finance',use:'weekly',tool:'Google Gemini',data:'internal',approved:'partial'},
+  {dept:'Finance',use:'rarely',tool:'Microsoft Copilot (approved)',data:'internal',approved:'yes'},
+  {dept:'Sales',use:'daily',tool:'ChatGPT (personal account)',data:'internal',approved:'no'},
+  {dept:'Sales',use:'daily',tool:'Midjourney / DALL-E',data:'public',approved:'no'},
+  {dept:'Sales',use:'weekly',tool:'ChatGPT (personal account)',data:'confidential',approved:'no'},
+  {dept:'Sales',use:'rarely',tool:'Claude (Anthropic)',data:'public',approved:'partial'},
+  {dept:'Operations',use:'weekly',tool:'ChatGPT (personal account)',data:'internal',approved:'partial'},
+  {dept:'Operations',use:'rarely',tool:'Microsoft Copilot (approved)',data:'internal',approved:'yes'},
+  {dept:'Operations',use:'daily',tool:'Google Gemini',data:'internal',approved:'no'},
+  {dept:'IT',use:'daily',tool:'Microsoft Copilot (approved)',data:'internal',approved:'yes'},
+  {dept:'IT',use:'daily',tool:'Claude (Anthropic)',data:'public',approved:'yes'},
+  {dept:'IT',use:'weekly',tool:'ChatGPT (enterprise account)',data:'internal',approved:'yes'},
+  {dept:'Management',use:'weekly',tool:'ChatGPT (personal account)',data:'confidential',approved:'no'},
+];
+let shadowData = [...SHADOW_BASE];
+
+function addSurveyResponse() {
+  const dept = document.getElementById('sh-dept').value;
+  const use  = document.getElementById('sh-use').value;
+  const tool = document.getElementById('sh-tool').value;
+  const data = document.getElementById('sh-data').value;
+  const approved = document.getElementById('sh-approved').value;
+  if (!dept||!use||!tool||!data||!approved) {
+    document.getElementById('sh-count').style.color='var(--red)';
+    document.getElementById('sh-count').textContent='Please fill in all fields to add a response.';
+    return;
+  }
+  shadowData.push({dept,use,tool,data,approved});
+  document.getElementById('sh-count').style.color='var(--green)';
+  document.getElementById('sh-count').textContent=`✓ ${shadowData.length} responses in dataset`;
+  addAuditEntry(`Survey response added · Department: ${dept} · Risk evaluated at report generation`, 'info');
+}
+
+function runShadowAI() {
+  const res = document.getElementById('shadow-result');
+  res.innerHTML='<div class="thinking"><span>AI analysing survey</span><div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div></div>';
+  addAuditEntry(`Shadow AI analysis started · ${shadowData.length} survey responses · Source: Teams survey`, 'info');
+  setTimeout(() => {
+    const total = shadowData.length;
+    const shadow = shadowData.filter(r=>r.approved==='no'||r.approved==='partial');
+    const highRisk = shadowData.filter(r=>(r.data==='pii'||r.data==='confidential')&&r.approved!=='yes');
+    const shadowPct = Math.round(shadow.length/total*100);
+    const riskPct = Math.round(highRisk.length/total*100);
+
+    const depts = [...new Set(shadowData.map(r=>r.dept))];
+    const deptStats = depts.map(d=>{
+      const rows = shadowData.filter(r=>r.dept===d);
+      const sh = rows.filter(r=>r.approved!=='yes');
+      return {d, pct:Math.round(sh.length/rows.length*100), n:rows.length};
+    }).sort((a,b)=>b.pct-a.pct);
+
+    const toolMap = {};
+    shadowData.filter(r=>r.approved!=='yes').forEach(r=>{ toolMap[r.tool]=(toolMap[r.tool]||0)+1; });
+    const tools = Object.entries(toolMap).sort((a,b)=>b[1]-a[1]);
+    const toolMax = tools[0]?.[1]||1;
+
+    const riskLevel = riskPct>=30?'HIGH':riskPct>=15?'MEDIUM':'LOW';
+    const riskColor = riskPct>=30?'var(--red)':riskPct>=15?'var(--amber)':'var(--green)';
+
+    addAuditEntry(`Analysis complete · Shadow AI adoption: ${shadowPct}% · High-risk exposure: ${riskPct}%`, 'ok');
+    addAuditEntry(`Compliance flag raised · ${highRisk.length} responses with PII/confidential data and unapproved AI`, 'warn');
+
+    res.classList.add('has-result');
+    res.innerHTML = `
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;margin-bottom:1rem">
+  <div style="background:var(--red-bg);border:1px solid var(--red);border-radius:0.5rem;padding:0.6rem 0.75rem;text-align:center">
+    <div style="font-size:1.6rem;font-weight:800;color:var(--red)">${shadowPct}%</div>
+    <div style="font-size:0.72rem;color:var(--red);font-weight:600">Shadow AI use</div>
+  </div>
+  <div style="background:${riskPct>=30?'var(--red-bg)':riskPct>=15?'var(--amber-bg)':'var(--green-bg)'};border:1px solid ${riskColor};border-radius:0.5rem;padding:0.6rem 0.75rem;text-align:center">
+    <div style="font-size:1.6rem;font-weight:800;color:${riskColor}">${riskLevel}</div>
+    <div style="font-size:0.72rem;color:${riskColor};font-weight:600">Risk level</div>
+  </div>
+  <div style="background:var(--amber-bg);border:1px solid var(--amber);border-radius:0.5rem;padding:0.6rem 0.75rem;text-align:center">
+    <div style="font-size:1.6rem;font-weight:800;color:var(--amber)">${highRisk.length}</div>
+    <div style="font-size:0.72rem;color:var(--amber);font-weight:600">High-risk responses</div>
+  </div>
+</div>
+
+<div style="font-size:0.78rem;font-weight:700;color:var(--text);margin-bottom:0.4rem">📊 Shadow AI by department</div>
+${deptStats.map(({d,pct,n})=>{
+  const col = pct>=70?'var(--red)':pct>=40?'var(--amber)':'var(--green)';
+  return `<div style="margin-bottom:0.35rem">
+  <div style="display:flex;justify-content:space-between;font-size:0.76rem;margin-bottom:2px"><span>${d}</span><span style="color:${col};font-weight:700">${pct}% <span style="color:var(--soft);font-weight:400">(${n} responses)</span></span></div>
+  <div style="background:var(--mid);border-radius:3px;height:8px"><div style="background:${col};width:${pct}%;height:8px;border-radius:3px"></div></div>
+</div>`;}).join('')}
+
+<div style="font-size:0.78rem;font-weight:700;color:var(--text);margin:0.75rem 0 0.4rem">🛠️ Unapproved AI tools in use</div>
+${tools.slice(0,5).map(([t,c])=>`<div style="margin-bottom:0.3rem">
+  <div style="display:flex;justify-content:space-between;font-size:0.74rem;margin-bottom:2px"><span>${t}</span><span style="font-weight:700">${c}</span></div>
+  <div style="background:var(--mid);border-radius:3px;height:6px"><div style="background:var(--maroon);width:${Math.round(c/toolMax*100)}%;height:6px;border-radius:3px"></div></div>
+</div>`).join('')}
+
+<div style="background:var(--red-bg);border-left:3px solid var(--red);padding:0.6rem 0.75rem;border-radius:0 0.4rem 0.4rem 0;margin-top:0.75rem;font-size:0.78rem">
+  <div style="font-weight:700;color:var(--red);margin-bottom:0.3rem">⚠️ Compliance flag</div>
+  <div style="color:var(--text)">${highRisk.length} employees are sharing PII or confidential data with unapproved AI services — potential GDPR exposure.</div>
+</div>
+
+<div style="font-size:0.78rem;font-weight:700;color:var(--text);margin:0.75rem 0 0.3rem">✅ Recommendations</div>
+<div style="font-size:0.76rem;color:var(--soft);line-height:1.7">
+1. Deploy an approved AI platform (Copilot/Azure OpenAI) to replace personal accounts<br>
+2. Publish a clear AI policy with an approved-tools whitelist — communicate to all departments<br>
+3. DLP rules blocking upload of PII/confidential data to non-approved AI services<br>
+4. Quarterly surveys for ongoing risk visibility and behaviour measurement
+</div>`;
+  }, 1500);
 }
 
 // ── PRODUCT SPECS & PRICING ──
